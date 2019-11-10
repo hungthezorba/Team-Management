@@ -3,35 +3,32 @@
 	<form action="" method="POST">
 		{{ form.hidden_tag() }}
 		<div>
-			{{form.username.label}}
-			{{form.username}}
+			{{form.teamName.label}}
+			{{form.teamName}}
 			{% if form.errors %}
-				{% for error in form.username.errors %}
+				{% for error in form.teamName.errors %}
 					<span>{{error}}</span>
 				{% endfor %}
 			{% endif %}
 		</div>
 		<div>
-			{{form.email.label}}
-			{{form.email}}
+			{{form.teamDescription.label}}
+			{{form.teamDescription}}
 			{% if form.errors %}
-				{% for error in form.email.errors %}
+				{% for error in form.teamDescription.errors %}
 					<span>{{error}}</span>
 				{% endfor %}
 			{% endif %}
 		</div>
 		<div>
-			{{form.password.label}}	
-			{{form.password}}	
+			{{form.teamMember.label}}
+			{{form.teamMember}}
+			{% if form.errors %}
+				{% for error in form.teamMember.errors %}
+					<span>{{error}}</span>
+				{% endfor %}
+			{% endif %}
 		</div>
-		<div>
-			{{form.confirm_password.label}}	
-			{{form.confirm_password}}	
-		</div>
-		<div>
-			{{form.gender.label}}	
-			{{form.gender}}	
-		</div>		
 		<div>
 			{{form.submit}}	
 		</div>
