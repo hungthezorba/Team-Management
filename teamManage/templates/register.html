@@ -21,6 +21,15 @@
 			{% endif %}
 		</div>
 		<div>
+			{{form.phoneNumber.label}}
+			{{form.phoneNumber}}
+			{% if form.errors %}
+				{% for error in form.email.errors %}
+					<span>{{error}}</span>
+				{% endfor %}
+			{% endif %}
+		</div>
+		<div>
 			{{form.password.label}}	
 			{{form.password}}	
 		</div>

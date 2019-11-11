@@ -21,10 +21,10 @@
 			{% endif %}
 		</div>
 		<div>
-			{{form.teamMember.label}}
-			{{form.teamMember}}
+			{{form.teamMembers.label}}
+			{{form.teamMembers}}
 			{% if form.errors %}
-				{% for error in form.teamMember.errors %}
+				{% for error in form.teamMembers.errors %}
 					<span>{{error}}</span>
 				{% endfor %}
 			{% endif %}
