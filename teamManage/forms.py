@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, RadioField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, SelectField, RadioField, TextAreaField, IntegerField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from teamManage.models import User, Team
 
 class RegisterForm(FlaskForm):
 	username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
@@ -8,6 +9,67 @@ class RegisterForm(FlaskForm):
 	password = PasswordField("Password", validators=[DataRequired()])
 	confirm_password = PasswordField("Confirm Password", validators=[DataRequired(),EqualTo("password")])
 	gender = RadioField("Gender", choices=[("male","Male"),("female","Female")], validators=[DataRequired()])
+	phoneNumber = IntegerField("Phone Number", validators=[DataRequired()])
 	submit = SubmitField("Sign Up")
+
+	def validate_username(self,username):
+		user = User.query.filter_by(username=username.data).first()
+		if user:
+			raise ValidationError("Username has been taken! Please choose another one!")
+
+	def validate_email(self,email):
+		email = User.query.filter_by(email=email.data).first()
+		if email:
+			raise ValidationError("Email has been taken! Please choose another one!")		
+
+	def validate_phoneNumber(self,phoneNumber):
+		phoneNumber = User.query.filter_by(phoneNumber=phoneNumber.data).first()
+		if phoneNumber:
+			raise ValidationError("Phone number has been taken! Please choose another one!")	
+
+class LoginForm(FlaskForm):
+	email = StringField("Email", validators=[DataRequired(), Email()])
+	password = PasswordField("Password", validators=[DataRequired()])
+	submit = SubmitField("Login")
+
+
+
+class TeamForm(FlaskForm):
+	teamName = StringField("Team Name", validators=[DataRequired(), Length(min=2, max=50)])
+	teamDescription = TextAreaField("Team Description", validators=[DataRequired()])
+	teamMembers = StringField("Members")
+	submit = SubmitField("Create Team")
+
+	def validate_teamMembers(self, teamMembers):
+		if teamMembers.data != '':
+			members = teamMembers.data.split(', ')
+			for member in members:
+				user = User.query.filter_by(username=member).first()
+				if user:
+					pass
+				else:
+					raise ValidationError("%s is not a Team Manager's member" %(member))
+		
+class AddMemberForm(FlaskForm):
+	teamMembers = StringField("Members")
+	submit = SubmitField("Add")
+
+	def validate_teamMembers(self, teamMembers):
+		if teamMembers.data != '':
+			members = teamMembers.data.split(', ')
+			for member in members:
+				user = User.query.filter_by(username=member).first()
+				if user:
+					pass
+				else:
+					raise ValidationError("%s is not a Team Manager's member" %(member))
+		else:
+			raise ValidationError("Please fill in the name")
+		
+
+class TaskForm(FlaskForm):
+	name = StringField("Task Name", validators=[DataRequired()])
+	description = TextAreaField("Task Description")
+	submit = SubmitField("Add Task")
 
 

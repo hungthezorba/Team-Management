@@ -1,0 +1,36 @@
+{% extends "template.html" %}
+{% block content %}
+	<form action="" method="POST">
+		{{ form.hidden_tag() }}
+		<div>
+			{{form.teamName.label}}
+			{{form.teamName}}
+			{% if form.errors %}
+				{% for error in form.teamName.errors %}
+					<span>{{error}}</span>
+				{% endfor %}
+			{% endif %}
+		</div>
+		<div>
+			{{form.teamDescription.label}}
+			{{form.teamDescription}}
+			{% if form.errors %}
+				{% for error in form.teamDescription.errors %}
+					<span>{{error}}</span>
+				{% endfor %}
+			{% endif %}
+		</div>
+		<div>
+			{{form.teamMembers.label}}
+			{{form.teamMembers}}
+			{% if form.errors %}
+				{% for error in form.teamMembers.errors %}
+					<span>{{error}}</span>
+				{% endfor %}
+			{% endif %}
+		</div>
+		<div>
+			{{form.submit}}	
+		</div>
+	</form>
+{% endblock %}	
