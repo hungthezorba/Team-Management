@@ -1,0 +1,50 @@
+{% extends "template.html" %}
+{% block content %}
+<div>
+	<h3>{{team.name}}</h3>
+	<p>{{team.description}}</p>
+	<ul>
+		{% for member in team.members %}
+			<li>{{ member.username }}</li>
+		{% endfor %}
+	</ul>
+	<h3>Team Task</h3>
+	<ul>
+		{% for task in team.tasks %}
+			<li>{{ task.name }}</li>
+		{% endfor %}
+	</ul>
+</div>
+<div>
+	<form action="" method="POST">
+			{{ form_add_member.hidden_tag() }}
+			<div>
+				{{ form_add_member.teamMembers.label }}
+				{{ form_add_member.teamMembers }}
+				{% if form_add_member.errors %}
+				{% for error in form_add_member.teamMembers.errors %}
+					<span>{{error}}</span>
+				{% endfor %}
+			{% endif %}
+			</div>
+			<div>
+				{{form_add_member.submit}}
+			</div>
+	</form>
+
+	<form action="" method="POST">
+		{{ form_add_task.hidden_tag() }}
+		<div>
+			{{ form_add_task.name.label }}
+			{{ form_add_task.name }}
+		</div>
+		<div>
+			{{ form_add_task.description.label }}
+			{{ form_add_task.description }}
+		</div>
+		<div>
+			{{ form_add_task.submit}}
+		</div>
+	</form>
+</div>
+{% endblock %}
