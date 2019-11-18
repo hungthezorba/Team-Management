@@ -1,14 +1,12 @@
 {% extends "template.html" %}
 {% block content %}
 <div>
+	<a href="{{url_for('create_team')}}">Create A New Team</a>
+</div>
+<div>
 	{% for team in teams %}
-		<a href="{{url_for('myTeam',team_id=team.teamId)}}"><h3>{{team.teamName}}</h3></a>
-		<p>{{team.teamDescription}}</p>
-		<ul>
-			{% for member in team.members %}
-				<li>{{ member }}</li>
-			{% endfor %}
-		</ul>
+		<a href="{{url_for('myTeam',team_id=team.id)}}"><h3>{{team.name}}</h3></a>
+		<p>{{team.description}}</p>
 	{% endfor %}
 </div>
 {% endblock %}
