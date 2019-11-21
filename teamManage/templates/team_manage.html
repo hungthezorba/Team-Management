@@ -25,9 +25,7 @@
 		{% for task in team.tasks %}
 			{% if task.status == False %}
 				<div class="card" style="width: 18rem;">
-				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Edit">
-  					Edit
-				</button>					
+				
 					<div class="card-body">
 				    	<h5 class="card-title">{{task.name}}</h5>
 				   	 	<p class="card-text">{{task.description}}</p>
@@ -56,6 +54,13 @@
 				{% endif %}
 		{% endfor %}
 	</ul>
+</div>
+<!-- Progress Bar -->
+
+<div class="w3-light-grey">
+  <div class="w3-container w3-green w3-center" style="width:{{progress}}%">{{progress}}%</div>
+</div> 
+
 <!-- Modal for addin task -->
 <div class="modal fade" id="AddingTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   	<div class="modal-dialog" role="document">
@@ -118,38 +123,4 @@
 	</div>
 </div>
 <!--testing -->
-<!-- Modal for addin task -->
-<div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  	<div class="modal-dialog" role="document">
-    	<div class="modal-content">
-      		<div class="modal-header">
-        		<h5 class="modal-title" id="exampleModalLabel">Edit</h5>
-        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          		<span aria-hidden="true">&times;</span>
-        		</button>
-      		</div>
-      	<div class="modal-body">
-        	<form action="" method="POST">	
-        		{{ form_update_task.hidden_tag() }}
-				<div>
-					{{form_update_task.name.label}}
-					{{form_update_task.name}}
-				</div>
-				<div>
-					{{form_update_task.description.label}}
-					{{form_update_task.description}}
-				</div>
-				<div>
-					{{form_update_task.status.label}}
-					{{form_update_task.status}}
-				</div>
-			    <div class="modal-footer">
-			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			        {{form_update_task.submit_task(class="btn btn-primary")}}  
-			    </div>
-	    	</form> 
-	    </div>
-    	</div>
-	</div>
-</div>
 {% endblock %}

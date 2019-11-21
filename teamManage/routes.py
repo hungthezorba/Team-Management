@@ -61,6 +61,11 @@ def myTeam(team_id):
 	form_add_member = AddMemberForm()
 	form_add_task = TaskForm()
 	form_update_task = TaskForm()
+	tasks = team.tasks
+	progress = 0 
+	for task in tasks:
+		if task.status == True:
+			progress += 1
 
 	#Separate 2 form validation
 	if form_add_member.submit_member.data and form_add_member.validate(): 
@@ -75,17 +80,20 @@ def myTeam(team_id):
 		db.session.add(task)
 		db.session.commit()
 
+
+
 	return render_template(
 		"team_manage.html", 
 		title=team.name, 
 		team=team, 
 		form_add_member=form_add_member, 
 		form_add_task=form_add_task,
-		form_update_task=form_update_task
+		form_update_task=form_update_task,
+		progress= round(progress / len(tasks) * 100)
 		)	
 
 
-@app.route("/team/<int:team_id>/<int:task_id>", methods=["GET", "POST"])
+@app.route("/team/<int:team_id>/<int:task_id>/edit", methods=["GET", "POST","PUT"])
 def updateTask(team_id,task_id):
 	task = Task.query.get_or_404(task_id)
 	form_update_task = TaskForm()
@@ -97,7 +105,7 @@ def updateTask(team_id,task_id):
 	form_update_task.name.data	= task.name
 	form_update_task.description.data = task.description
 	form_update_task.status.data = task.status
-	return render_template("task.html", title=task.name, task=task, form_update_task=form_update_task)
+	return redirect(url_for("myTeam"),team_id=task.inTeam.id)
 
 @app.route("/team/<int:team_id>/<int:task_id>/complete", methods=["GET", "POST"])
 def completeTask(team_id,task_id):
