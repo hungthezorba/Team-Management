@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, RadioField, TextAreaField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, RadioField, TextAreaField, IntegerField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from teamManage.models import User, Team
 
@@ -52,7 +52,7 @@ class TeamForm(FlaskForm):
 		
 class AddMemberForm(FlaskForm):
 	teamMembers = StringField("Members")
-	submit = SubmitField("Add")
+	submit_member = SubmitField("Add")
 
 	def validate_teamMembers(self, teamMembers):
 		if teamMembers.data != '':
@@ -70,6 +70,9 @@ class AddMemberForm(FlaskForm):
 class TaskForm(FlaskForm):
 	name = StringField("Task Name", validators=[DataRequired()])
 	description = TextAreaField("Task Description")
-	submit = SubmitField("Add Task")
+	status = BooleanField("Status")
+	submit_task = SubmitField("Add Task")
+
+
 
 

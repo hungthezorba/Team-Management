@@ -1,50 +1,155 @@
-{% extends "template.html" %}
+{% extends "layout.html" %}
 {% block content %}
 <div>
 	<h3>{{team.name}}</h3>
 	<p>{{team.description}}</p>
-	<ul>
-		{% for member in team.members %}
-			<li>{{ member.username }}</li>
-		{% endfor %}
-	</ul>
-	<h3>Team Task</h3>
-	<ul>
-		{% for task in team.tasks %}
-			<li>{{ task.name }}</li>
-		{% endfor %}
-	</ul>
+	<div>
+		<h4> Member in team </h4>
+		<ul>
+			{% for member in team.members %}
+			<div style="display: inline-block; text-align: center;">
+				<li>{{ member.username }}
+					<img style="display: block;" class="img-circle" width="50px" height="50px" src="{{url_for('static', filename='profile_pics/' + member.profile_image)}}" />
+				</li>
+			</div>
+			{% endfor %}
+		</ul>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddingMember">
+  			Add member
+		</button>
+	</div>
 </div>
 <div>
-	<form action="" method="POST">
-			{{ form_add_member.hidden_tag() }}
-			<div>
-				{{ form_add_member.teamMembers.label }}
-				{{ form_add_member.teamMembers }}
-				{% if form_add_member.errors %}
-				{% for error in form_add_member.teamMembers.errors %}
-					<span>{{error}}</span>
-				{% endfor %}
+	<h3>Doing</h3>
+	<ul>
+		{% for task in team.tasks %}
+			{% if task.status == False %}
+				<div class="card" style="width: 18rem;">
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Edit">
+  					Edit
+				</button>					
+					<div class="card-body">
+				    	<h5 class="card-title">{{task.name}}</h5>
+				   	 	<p class="card-text">{{task.description}}</p>
+				    	<a href="{{url_for('completeTask',team_id=team.id,task_id=task.id)}}" class="btn btn-primary">Mark as complete</a>
+				  	</div>
+				</div>
 			{% endif %}
-			</div>
-			<div>
-				{{form_add_member.submit}}
-			</div>
-	</form>
-
-	<form action="" method="POST">
-		{{ form_add_task.hidden_tag() }}
-		<div>
-			{{ form_add_task.name.label }}
-			{{ form_add_task.name }}
-		</div>
-		<div>
-			{{ form_add_task.description.label }}
-			{{ form_add_task.description }}
-		</div>
-		<div>
-			{{ form_add_task.submit}}
-		</div>
-	</form>
+		{% endfor %}
+	</ul>
+	<!-- Button Adding Task -->
+	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddingTask">
+  		Add task
+	</button>
+</div>
+<div>
+	<h3>Complete</h3>
+	<ul>
+		{% for task in team.tasks %}
+			{% if task.status == True %}
+				<div class="card" style="width: 18rem;">
+				  <div class="card-body">
+				    <h5 style="color:green;" class="card-title">{{task.name}}</h5>
+				    <p class="card-text">{{task.description}}</p>
+				  </div>
+				</div>
+				{% endif %}
+		{% endfor %}
+	</ul>
+<!-- Modal for addin task -->
+<div class="modal fade" id="AddingTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<h5 class="modal-title" id="exampleModalLabel">Add new task</h5>
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          		<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      	<div class="modal-body">
+        	<form action="" method="POST">
+				{{ form_add_task.hidden_tag() }}
+				<div>
+					{{ form_add_task.name.label }}
+					{{ form_add_task.name }}
+				</div>
+				<div>
+					{{ form_add_task.description.label }}
+					{{ form_add_task.description }}
+				</div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        {{form_add_task.submit_task(class="btn btn-primary")}}  
+			    </div>
+	    	</form> 
+	    </div>
+    	</div>
+	</div>
+</div>
+<!-- Modal for addin member -->
+<div class="modal fade" id="AddingMember" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<h5 class="modal-title" id="exampleModalLabel">Add new members</h5>
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          		<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      	<div class="modal-body">
+        	<form action="" method="POST">
+				{{ form_add_member.hidden_tag() }}
+				<div>
+					{{ form_add_member.teamMembers.label }}
+					{{ form_add_member.teamMembers }}
+					{% if form_add_member.errors %}
+					{% for error in form_add_member.teamMembers.errors %}
+						<span>{{error}}</span>
+					{% endfor %}
+				{% endif %}
+				</div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        {{form_add_member.submit_member(class="btn btn-primary")}}  
+			    </div>
+	    	</form> 
+	    </div>
+    	</div>
+	</div>
+</div>
+<!--testing -->
+<!-- Modal for addin task -->
+<div class="modal fade" id="Edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          		<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      	<div class="modal-body">
+        	<form action="" method="POST">	
+        		{{ form_update_task.hidden_tag() }}
+				<div>
+					{{form_update_task.name.label}}
+					{{form_update_task.name}}
+				</div>
+				<div>
+					{{form_update_task.description.label}}
+					{{form_update_task.description}}
+				</div>
+				<div>
+					{{form_update_task.status.label}}
+					{{form_update_task.status}}
+				</div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        {{form_update_task.submit_task(class="btn btn-primary")}}  
+			    </div>
+	    	</form> 
+	    </div>
+    	</div>
+	</div>
 </div>
 {% endblock %}
