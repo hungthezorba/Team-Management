@@ -11,6 +11,8 @@ def home():
 
 @app.route("/register", methods=["GET","POST"])
 def register():
+	if current_user.is_authenticated:
+		return redirect(url_for("home"))
 	form = RegisterForm()
 	if form.validate_on_submit():
 		pw_hash = bcrypt.generate_password_hash(form.password.data)
@@ -33,13 +35,18 @@ def login():
 		else:
 			flash("Login unsucessful! Please check your email and password")
 			return redirect(url_for("login"))
-	return render_template("login.html", title="Login", form=form)
+	return render_template("login2.html", title="Login", form=form)
+
+@app.route('/profile')
+@login_required
+def profile():
+    image_file = url_for('static', filename='profile_pics/' + current_user.profile_image)
+    return render_template('profile.html', title='Profile Page', image_file=image_file)
 
 @app.route("/logout")
 def logout():
 	logout_user()
 	return redirect(url_for("home"))
-
 
 @app.route("/team")
 @login_required
@@ -53,20 +60,51 @@ def myTeam(team_id):
 	team = Team.query.get_or_404(team_id)
 	form_add_member = AddMemberForm()
 	form_add_task = TaskForm()
+	form_update_task = TaskForm()
 
-	if form_add_member.validate_on_submit():
+	#Separate 2 form validation
+	if form_add_member.submit_member.data and form_add_member.validate(): 
 		members = form_add_member.teamMembers.data.split(', ')
 		for member in members:
 			user = User.query.filter_by(username=member).first()
 			team.members.append(user)
 		db.session.commit()
 
-	if form_add_task.validate_on_submit():
+	if form_add_task.submit_task.data and form_add_task.validate():
 		task = Task(name=form_add_task.name.data, description=form_add_task.description.data, inTeam=team)
 		db.session.add(task)
 		db.session.commit()
 
-	return render_template("team_manage.html", title=team.name, team=team, form_add_member=form_add_member, form_add_task=form_add_task)	
+	return render_template(
+		"team_manage.html", 
+		title=team.name, 
+		team=team, 
+		form_add_member=form_add_member, 
+		form_add_task=form_add_task,
+		form_update_task=form_update_task
+		)	
+
+
+@app.route("/team/<int:team_id>/<int:task_id>", methods=["GET", "POST"])
+def updateTask(team_id,task_id):
+	task = Task.query.get_or_404(task_id)
+	form_update_task = TaskForm()
+	if form_update_task.validate_on_submit():
+		task.name = form_update_task.name.data
+		task.description = form_update_task.description.data
+		task.status = form_update_task.status.data
+		db.session.commit()
+	form_update_task.name.data	= task.name
+	form_update_task.description.data = task.description
+	form_update_task.status.data = task.status
+	return render_template("task.html", title=task.name, task=task, form_update_task=form_update_task)
+
+@app.route("/team/<int:team_id>/<int:task_id>/complete", methods=["GET", "POST"])
+def completeTask(team_id,task_id):
+	task = Task.query.get_or_404(task_id)
+	task.status = True
+	db.session.commit()
+	return redirect(url_for("myTeam",team_id=task.inTeam.id))
 
 
 @app.route("/team/create", methods=["GET","POST"])

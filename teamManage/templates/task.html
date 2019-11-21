@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+<form action="" method="POST">
+	{{ form_update_task.hidden_tag() }}
+	<div>
+		{{form_update_task.name.label}}
+		{{form_update_task.name}}
+	</div>
+	<div>
+		{{form_update_task.description.label}}
+		{{form_update_task.description}}
+	</div>
+	<div>
+		{{form_update_task.status.label}}
+		{{form_update_task.status}}
+	</div>
+	<div>
+		{{form_update_task.submit_task}}
+	</div>
+</form>
+{% endblock content %}

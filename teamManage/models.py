@@ -41,4 +41,6 @@ class Task(db.Model):
 	team_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
 
 	def __repr__(self):
-		return (f" ({self.name}, {self.description}, {self.status}, {self.team_id})")	
+		return (f" ({self.name}, {self.description}, {self.status}, {self.team_id})")
+
+#class Post(db.Model)
