@@ -8,7 +8,8 @@ def load_user(user_id):
 UserTeam = db.Table(
 	"UserTeam",
 	db.Column("userId", db.Integer, db.ForeignKey("user.id")),
-	db.Column("teamId", db.Integer, db.ForeignKey("team.id"))
+	db.Column("teamId", db.Integer, db.ForeignKey("team.id")), 
+	db.PrimaryKeyConstraint('userId', 'teamId')
 )
 
 class User(db.Model, UserMixin):
@@ -19,7 +20,7 @@ class User(db.Model, UserMixin):
 	password = db.Column(db.String(60), nullable=False)
 	gender = db.Column(db.String(8), nullable=False)
 	phoneNumber = db.Column(db.Integer, unique=True, nullable=False)
-	member = db.relationship("Team", secondary=UserTeam, backref=db.backref("members",lazy="dynamic"))
+	member = db.relationship("Team", cascade="all", secondary=UserTeam,backref=db.backref("members",lazy="dynamic"))
 
 	def __repr__(self):
 		return (f" ({self.username}, {self.email}, {self.gender}, {self.phoneNumber}, {self.member})")

@@ -1,0 +1,107 @@
+{% extends "layout2.html" %}
+{% block content%}
+<div style="padding: 20px;">
+		<section id="team-header">
+			<div class="container">
+				<h2>{{ team.name }}</h2>
+				<form method="POST" action="{{url_for('delete_team',team_id=team.id)}}">
+					<input type="submit" value="Delete" class="btn btn-danger">
+				</form>
+				<h2>
+					Members
+					<img data-toggle="modal" data-target="#AddingMember" class="add-icon" src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
+				</h2>
+				<div>
+				{% for member in team.members %}					
+					<div class="avatar-icon" >
+						<a href="#"><img src="{{url_for('static', filename='profile_pics/' + member.profile_image)}}"/></a>
+					</div>
+				{% endfor %}
+				</div>
+			</div>
+		</section>
+		<section id="team-body">
+			<div class="container">
+				<!-- Progress Bar -->
+				<h3>
+					Progress
+				</h3>
+				<div>
+					<div class="running-bar" >
+						<div id="progress" style="width: {{progress}}%" >{{progress}}%</div>
+						<p style="float: right;">Due in 5 days</p>						
+						
+					</div>
+					<div id="check">
+						<p>
+							3/12
+							<img id="check-icon"  src="https://cdn4.iconfinder.com/data/icons/delivery-1-1/512/clipboard-512.png" />
+						</p>
+					</div>
+				</div>
+				<!-- Tasks -->
+				<div id="task">
+					<h2>Task
+						<img class="add-icon" src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
+					</h2>
+					<div style="overflow-y: auto; max-height:375px;" id="doing-task">
+						{% for task in team.tasks %}
+							{% if task.status == False %}
+							<div class="task-card">
+								<h4>{{ task.name }}</h4>
+								<p>{{ task.description }}</p>
+						    	<a href="{{url_for('completeTask',team_id=team.id,task_id=task.id)}}" class="btn btn-primary">Mark as complete</a>
+								<p>Created 5 days ago</p>
+							</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+					<h2>Complete</h2>
+					<div class="card" style="overflow-y: auto; max-height:375px;" id="complete-task">
+						<div class="list-group list-group-flush">
+							{% for task in team.tasks %}
+								{% if task.status == True %}
+								<div class="task-card list-group-item">
+									<h4>{{ task.name }}</h4>
+									<p>{{ task.description }}</p>
+									<p>Completed 5 days ago</p>
+								</div>
+								{% endif %}
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+</div>
+<div class="modal fade" id="AddingMember" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<h5 class="modal-title" id="exampleModalLabel">Add new members</h5>
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          		<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      	<div class="modal-body">
+        	<form action="" method="POST">
+				{{ form_add_member.hidden_tag() }}
+				<div>
+					{{ form_add_member.teamMembers.label }}
+					{{ form_add_member.teamMembers }}
+					{% if form_add_member.errors %}
+					{% for error in form_add_member.teamMembers.errors %}
+						<span>{{error}}</span>
+					{% endfor %}
+				{% endif %}
+				</div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        {{form_add_member.submit_member(class="btn btn-primary")}}  
+			    </div>
+	    	</form> 
+	    </div>
+    	</div>
+	</div>
+</div>
+{% endblock content%}

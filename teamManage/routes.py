@@ -3,6 +3,7 @@ from teamManage import app, db, bcrypt
 from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm
 from teamManage.models import User, Team, Task
 from flask_login import login_user, current_user, login_required, logout_user
+import json
 
 @app.route("/")
 @app.route("/home")
@@ -30,10 +31,10 @@ def login():
 		user = User.query.filter_by(email=form.email.data).first()
 		if user and bcrypt.check_password_hash(user.password, form.password.data):
 			login_user(user)
-			flash("Login successful!")
+			flash("Login successful!", "success")
 			return redirect(url_for("home"))
 		else:
-			flash("Login unsucessful! Please check your email and password")
+			flash("Login unsucessful! Please check your email and password","danger")
 			return redirect(url_for("login"))
 	return render_template("login2.html", title="Login", form=form)
 
@@ -46,13 +47,32 @@ def profile():
 @app.route("/logout")
 def logout():
 	logout_user()
+	flash("You have been logout","primary")
 	return redirect(url_for("home"))
 
 @app.route("/team")
 @login_required
 def team():
-	teams = Team.query.all()
-	return render_template("team.html", title="Your team", teams=teams)
+	teams = Team.query.filter(Team.members.any(username=current_user.username)).all()
+	team_data = []
+	i = 0
+	for team in teams:
+		progress = 0
+		team_data.append({})
+		team_data[i]["id"] = team.id
+		team_data[i]["name"] = team.name
+		team_data[i]["description"] = team.description
+		team_data[i]["members"] = len(team.members.all())
+		team_data[i]["tasks"] = len(team.tasks)
+		for index in range(len(team.tasks)):
+			if team.tasks[index].status == True:
+				progress += 1
+		if len(team.tasks) == 0 :
+			team_data[i]["progress"] = "100"
+		else:
+			team_data[i]["progress"] = str(progress/len(team.tasks)*100)
+		i += 1
+	return render_template("team.html", title="Your team", teams=teams,team_data=team_data)
 
 
 @app.route("/team/<int:team_id>", methods=["GET","POST"])
@@ -66,7 +86,11 @@ def myTeam(team_id):
 	for task in tasks:
 		if task.status == True:
 			progress += 1
-
+	if len(tasks) == 0:
+		progress = 100
+	else:
+		progress = round(progress / len(tasks) * 100)
+	
 	#Separate 2 form validation
 	if form_add_member.submit_member.data and form_add_member.validate(): 
 		members = form_add_member.teamMembers.data.split(', ')
@@ -83,13 +107,13 @@ def myTeam(team_id):
 
 
 	return render_template(
-		"team_manage.html", 
+		"myteam.html", 
 		title=team.name, 
 		team=team, 
 		form_add_member=form_add_member, 
 		form_add_task=form_add_task,
 		form_update_task=form_update_task,
-		progress= round(progress / len(tasks) * 100)
+		progress=progress
 		)	
 
 
@@ -123,9 +147,25 @@ def create_team():
 		members = form.teamMembers.data.split(', ')
 		team = Team(name=form.teamName.data, description=form.teamDescription.data)
 		db.session.add(team)
+		for member in members:
+			if member == current_user.username:
+				pass
+			else:
+				newMember = User.query.filter_by(username=member)
+				team.members.append(newMember)
 		team.members.append(current_user)
 		db.session.commit()
 		flash("Your team has been created!")
 		return redirect(url_for("myTeam",team_id=team.id)) # later will redirect to team/team_id url team_id
 	return render_template("create_team.html",form=form, title="Team Create")
+
+@app.route("/team/<int:team_id>/delete",methods=["GET","POST"])
+def delete_team(team_id):
+	team = Team.query.get_or_404(team_id)
+	for member in team.members.all():
+		team.members.remove(member)
+		db.session.commit()
+	db.session.delete(team)
+	db.session.commit()
+	return redirect(url_for("home"))
 

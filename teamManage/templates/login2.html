@@ -154,9 +154,9 @@
              </script>
     </head>
     <body>
-        {% extends "layout.html" %}
-        {% block content %}
+        {% extends "layout2.html" %}
         <div class="container">
+        {% block content %}
 
             <!-- Codrops top bar -->
             <div class="codrops-top">                
@@ -318,34 +318,6 @@
                             }
                             
                         </script>
-                        <div id="register" class="animate form">
-                            <form  autocomplete="on"> 
-                                <h1> Register </h1> 
-                                <p> 
-                                    <label for="usernamesignup" class="uname" data-icon="u">Username</label>
-                                    <input id="usernamesignup" name="usernamesignup" required="required" type="text" placeholder="Type your username" />
-                                </p>
-                                <p> 
-                                    <label for="emailsignup" class="youmail" data-icon="e" > Email</label>
-                                    <input id="emailsignup" name="emailsignup" required="required" type="email" placeholder="Type your email"/> 
-                                </p>
-                                <p> 
-                                    <label for="passwordsignup" class="youpasswd" data-icon="p"> Password </label>
-                                    <input id="passwordsignup" name="passwordsignup" required="required" type="password" placeholder="Type your password"/>
-                                </p>
-                                <p> 
-                                    <label for="passwordsignup_confirm" class="youpasswd" data-icon="p"> Re-password </label>
-                                    <input id="passwordsignup_confirm" name="passwordsignup_confirm" required="required" type="password" placeholder="Retype your password"/>
-                                </p>
-                                <p class="signin button"> 
-									<input type="submit" value="Submit"  onclick="return checkForm();"/> 
-								</p>
-                                <p class="change_link">  
-									Already had an account.
-									<a href="#tologin" class="to_register"> Login</a>
-								</p>
-                            </form>
-                        </div>
 						
                     </div>
                 </div>  
