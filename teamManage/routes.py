@@ -83,6 +83,7 @@ def myTeam(team_id):
 	form_update_task = TaskForm()
 	tasks = team.tasks
 	progress = 0 
+
 	for task in tasks:
 		if task.status == True:
 			progress += 1
@@ -91,12 +92,24 @@ def myTeam(team_id):
 	else:
 		progress = round(progress / len(tasks) * 100)
 	
+
+
+	
+
 	#Separate 2 form validation
 	if form_add_member.submit_member.data and form_add_member.validate(): 
+		member_in_team = []
 		members = form_add_member.teamMembers.data.split(', ')
-		for member in members:
-			user = User.query.filter_by(username=member).first()
-			team.members.append(user)
+
+		for member in team.members.all(): #find the member in team
+			member_in_team.append(member.username)
+
+		for member in members: 
+			if not (member in member_in_team): # a condition to check if member is already in the team or not
+				user = User.query.filter_by(username=member).first() # those line will ensure that the DB wont have any duplicated rows
+				team.members.append(user)
+			else:
+				flash("%s is already in your team" %(member), "info" )
 		db.session.commit()
 
 	if form_add_task.submit_task.data and form_add_task.validate():
@@ -147,15 +160,14 @@ def create_team():
 		members = form.teamMembers.data.split(', ')
 		team = Team(name=form.teamName.data, description=form.teamDescription.data)
 		db.session.add(team)
-		for member in members:
-			if member == current_user.username:
-				pass
+		for member in members: #looping in the adding member field
+			if member == '':
+				team.members.append(current_user)
 			else:
-				newMember = User.query.filter_by(username=member)
+				newMember = User.query.filter_by(username=member).first()
 				team.members.append(newMember)
-		team.members.append(current_user)
 		db.session.commit()
-		flash("Your team has been created!")
+		flash("Your team has been created!","success")
 		return redirect(url_for("myTeam",team_id=team.id)) # later will redirect to team/team_id url team_id
 	return render_template("create_team.html",form=form, title="Team Create")
 
@@ -164,8 +176,9 @@ def delete_team(team_id):
 	team = Team.query.get_or_404(team_id)
 	for member in team.members.all():
 		team.members.remove(member)
+
 		db.session.commit()
 	db.session.delete(team)
 	db.session.commit()
-	return redirect(url_for("home"))
+	return redirect(url_for("myTeam"))
 

@@ -3,24 +3,26 @@
 <div>
 	<h3>My Team</h3>
 	{% for i in range((team_data)|length) %}	
-	<div class="team-card">
-		<div class="team-card-content">
-			<a class="card-header" href="{{url_for('myTeam',team_id=team_data[i]['id'])}}"><h3>{{team_data[i]["name"]}}</h3></a>
-			<div>
-				<p style="display:inline-block"> 
-					{{team_data[i]["members"]}}
-					<img class="team-icon"src="https://cdn3.iconfinder.com/data/icons/online-user-1/120/group-2-512.png" />
-				</p> 
-				<p style="display: inline-block;"> 
-					{{team_data[i]["tasks"]}}
-					<img class="team-icon"src="https://cdn4.iconfinder.com/data/icons/delivery-1-1/512/clipboard-512.png" />
-				</p> 
-			</div>
-			<div class="running-bar" >
-				<div id="progress" style="width: {{team_data[i]['progress']}}%" >{{team_data[i]["progress"]}}%</div>
+	<a href="{{url_for('myTeam',team_id=team_data[i]['id'])}}" class="custom-card">
+		<div class="team-card">
+			<div class="team-card-content">
+				<h3 class="card-header">{{team_data[i]["name"]}}</h3>
+				<div style="margin-top: 10px;">
+					<p style="display:inline-block"> 
+						{{team_data[i]["members"]}}
+						<img class="team-icon"src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Team_work_icon.svg/1024px-Team_work_icon.svg.png" />
+					</p> 
+					<p style="display: inline-block;"> 
+						{{team_data[i]["tasks"]}}
+						<img class="team-icon"src="https://img.icons8.com/material-sharp/452/task-planning.png" />
+					</p> 
+				</div>
+				<div class="running-bar-small" >
+					<div id="progress-run" style="width: {{team_data[i]['progress']}}%" ></div>
+				</div>
 			</div>
 		</div>
-	</div>
+	</a>
 	{% endfor %}
 </div>
 <div>

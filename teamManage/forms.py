@@ -51,20 +51,18 @@ class TeamForm(FlaskForm):
 					raise ValidationError("%s is not a Team Manager's member" %(member))
 		
 class AddMemberForm(FlaskForm):
-	teamMembers = StringField("Members")
+	teamMembers = StringField("Members",validators=[DataRequired()])
 	submit_member = SubmitField("Add")
 
 	def validate_teamMembers(self, teamMembers):
-		if teamMembers.data != '':
-			members = teamMembers.data.split(', ')
-			for member in members:
-				user = User.query.filter_by(username=member).first()
-				if user:
-					pass
-				else:
-					raise ValidationError("%s is not a Team Manager's member" %(member))
-		else:
-			raise ValidationError("Please fill in the name")
+		members = teamMembers.data.split(', ')
+		for member in members:
+			user = User.query.filter_by(username=member).first()
+			if user:
+				pass
+			else:
+				raise ValidationError("%s is not a Team Manager's member" %(member))
+	
 		
 
 class TaskForm(FlaskForm):
