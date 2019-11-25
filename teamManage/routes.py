@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, flash, request
 from teamManage import app, db, bcrypt
-from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm
+from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm
 from teamManage.models import User, Team, Task
 from flask_login import login_user, current_user, login_required, logout_user
 import json
@@ -38,11 +38,64 @@ def login():
 			return redirect(url_for("login"))
 	return render_template("login2.html", title="Login", form=form)
 
-@app.route('/profile')
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+    output_size = (250, 250)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+    return picture_fn
+
+def remove_picture(user_picture):
+    picture_path = os.path.join(app.root_path, 'static/profile_pics', user_picture)
+    os.remove(picture_path)
+
+
+@app.route('/profile', methods=['GET'])
 @login_required
 def profile():
-    image_file = url_for('static', filename='profile_pics/' + current_user.profile_image)
-    return render_template('profile.html', title='Profile Page', image_file=image_file)
+   return redirect(url_for('other_profile', user_id=current_user.id))
+
+
+
+
+@app.route('/profile/<int:user_id>', methods=['GET'])
+def other_profile(user_id):
+    form = UpdateProfileForm()
+    user = User.query.get_or_404(user_id)
+    profile_image = url_for('static', filename='profile_pics/' + user.profile_image)
+    return render_template('profile.html', title='Profile Page', profile_image=profile_image, user=user, form=form)
+
+@app.route('/profile/<int:user_id>', methods=['GET', 'POST'])
+def update_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    form = UpdateProfileForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        if form.profile_image.data:
+            if current_user.profile_image == 'default.jpg':
+                picture_file = save_picture(form.profile_image.data)
+                current_user.profile_image = picture_file
+            else:
+                remove_picture(current_user.profile_image)
+                picture_file = save_picture(form.profile_image.data)
+                current_user.profile_image = picture_file
+        current_user.username = form.username.data
+        current_user.phoneNumber = form.phoneNumber.data
+        current_user.gender = form.gender.data
+        current_user.biography = form.biography.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('profile'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.phoneNumber.data = current_user.phoneNumber
+        form.gender.data = current_user.gender
+        form.biography.data = current_user.biography
+    profile_image = url_for('static', filename='profile_pics/' + user.profile_image)
+    return render_template('profile.html', title='Profile Page', profile_image=profile_image, user=user, form=form)
 
 @app.route("/logout")
 def logout():
