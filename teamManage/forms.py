@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, SelectField, RadioField, TextAreaField, IntegerField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from teamManage.models import User, Team
+from flask_login import current_user
 from wtforms.widgets import html5
 
 class RegisterForm(FlaskForm):
