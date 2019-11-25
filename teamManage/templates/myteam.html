@@ -53,7 +53,7 @@
 				<section id="task" class="section-custom">
 					<div>
 						<h2>Task
-							<img class="add-icon" src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
+							<img data-toggle="modal" data-target="#AddingTask" class="add-icon" src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
 						</h2>
 						<div class="card" style="overflow-y: auto; max-height:375px;" id="doing-task">
 							<div class="list-group list-group-flush">
@@ -88,6 +88,37 @@
 			</div>
 		</section>
 </div>
+<!-- Modal for adding task -->
+<div class="modal fade" id="AddingTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<h5 class="modal-title" id="exampleModalLabel">Add new task</h5>
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          		<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      	<div class="modal-body">
+        	<form action="" method="POST">
+				{{ form_add_task.hidden_tag() }}
+				<div>
+					{{ form_add_task.name.label }}
+					{{ form_add_task.name }}
+				</div>
+				<div>
+					{{ form_add_task.description.label }}
+					{{ form_add_task.description }}
+				</div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        {{form_add_task.submit_task(class="btn btn-primary")}}  
+			    </div>
+	    	</form> 
+	    </div>
+    	</div>
+	</div>
+</div>
+<!-- Modal for adding member -->
 <div class="modal fade" id="AddingMember" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   	<div class="modal-dialog" role="document">
     	<div class="modal-content">
