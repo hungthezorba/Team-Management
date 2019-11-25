@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, RadioField, TextAreaField, IntegerField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from teamManage.models import User, Team
+from wtforms.widgets import html5
 
 class RegisterForm(FlaskForm):
 	username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
