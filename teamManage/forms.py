@@ -73,6 +73,24 @@ class TaskForm(FlaskForm):
 	status = BooleanField("Status")
 	submit_task = SubmitField("Add Task")
 
+class UpdateProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    phoneNumber = StringField('Phone Number',validators=[Length(min=0, max=15)], widget=html5.NumberInput())
+    gender = StringField('Gender', validators=[DataRequired()])
+    profile_image = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
+    biography = TextAreaField('Your Biography:', validators=[Length(min=0, max=160)])
+    submit = SubmitField('Update!')
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('That username is taken. Please choose a different one.')
+    def validate_phone(self, phoneNumber):
+        if phoneNumber.data != current_user.phoneNumber:
+            phone = User.query.filter_by(phoneNumber=phoneNumber.data).first()
+            if phone:
+                raise ValidationError('That phone number is already claimed. Please choose a different one.')
+
 
 
 

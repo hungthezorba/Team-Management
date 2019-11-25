@@ -1,0 +1,140 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="media-left">
+                <img class="rounded-circle account-img m-4" src={{ profile_image }}>
+                {% if current_user.id == user.id %}
+                    <div class="media-body mb-5 ml-5  pl-5">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary user-edit" data-toggle="modal" data-target="#UpdateProfileModal"
+                                data-username="{{ current_user.username }}" data-phoneNumber="{{ current_user.phoneNumber }}"
+                                data-gender="{{ current_user.gender }}" data-biography="{{ current_user.biography }}">
+                            Update Profile
+                        </button>
+                    </div>
+                {% else %}
+                    <p></p> <!-- May implement later !-->
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h2 class="account-heading mt-5 mb-3">{{ user.username }}</h2>
+            <p>Contact via: <span class="text-primary">{{ user.email }}</span></p>
+            <p>Phone number: <span class="text-primary">{{ user.phoneNumber }}</span></p>
+            <p>Gender: <span class="text-primary">{{ user.gender }}</span></p>
+            <p >Biography: </p>
+            <p class="text-secondary">{{ user.biography }}</p>
+        </div>
+    </div>
+    <div class="modal fade" id="UpdateProfileModal" tabindex="-1" role="dialog" aria-labelledby="UpdateProfileLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="UpdateProfileLabel">Update your profile!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"> <!-- Modal update form !-->
+                    <form id="editForm" method="POST" action="" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <fieldset class="form-group">
+                            <legend class="border-bottom mb-4"></legend>
+                            <div class="form-group">
+                                {{ form.username.label(class="form-control-label") }}
+                                {% if form.username.errors %}
+                                    {{ form.username(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.username.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.username(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.phoneNumber.label(class="form-control-label") }}
+                                {% if form.phoneNumber.errors %}
+                                    {{ form.phoneNumber(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.phoneNumber.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.phoneNumber(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.gender.label(class="form-control-label") }}
+                                {% if form.gender.errors %}
+                                    {{ form.gender(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.gender.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.gender(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.profile_image.label() }}
+                                {{ form.profile_image(class="form-control-file") }}
+                                {% if form.profile_image.errors %}
+                                    {% for error in form.profile_image.errors %}
+                                        <span class="text-danger">{{ error }}</span></br>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.biography.label(class="form-control-label") }}
+                                {% if form.biography.errors %}
+                                    {{ form.biography(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.biography.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.biography(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </fieldset>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        {{ form.submit(class="btn btn-outline-danger") }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+
+    var formErrors = {% if form.errors %}true{% else %}false{% endif %};
+
+    $(document).ready(function() {
+        if (formErrors) {
+            $('.modal').modal('show');
+        }
+    });
+
+    $('#UpdateProfileModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var username = button.data('username')
+        var phoneNumber = button.data('phoneNumber')
+        var gender = button.data('gender')// Extract info from data-* attributes
+        var biography = button.data('biography')
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-body #username').val(username)
+        modal.find('.modal-body #phoneNumber').val(phoneNumber)
+        modal.find('.modal-body #gender').val(gender)
+        modal.find('.modal-body #biography').val(biography)
+})
+</script>
+{% endblock content %}

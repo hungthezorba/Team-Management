@@ -18,7 +18,8 @@ class User(db.Model, UserMixin):
 	profile_image = db.Column(db.String(20),nullable=False, default="default.jpg")
 	password = db.Column(db.String(60), nullable=False)
 	gender = db.Column(db.String(8), nullable=False)
-	phoneNumber = db.Column(db.Integer, unique=True, nullable=False)
+	phoneNumber = db.Column(db.String, unique=True, nullable=True)
+	biography = db.Column(db.String, unique=False, nullable=True)
 	member = db.relationship("Team", secondary=UserTeam, backref=db.backref("members",lazy="dynamic"))
 
 	def __repr__(self):
