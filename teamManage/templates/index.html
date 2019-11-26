@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+		<title>Team Management</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">	
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>			
+
+		<link rel="shortcut icon" href="{{url_for('static',filename='images/rose.png')}}"> 
+		<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/layout/demo.css')}}" />
+		<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/layout/component.css')}}" />
+		<script src="{{url_for('static',filename='js/modernizr.custom.js')}}"></script>
+<style type="text/css">
+/*Myteam.html CSS*/
+		.avatar-icon {
+			border-radius: 50%;
+			width: 50px;
+			height: 50px;
+			display: inline-block;
+			margin-right: 15px;
+
+		}
+
+		.add-icon {
+			position: relative;
+			border-radius: 50%;
+			width: 35px;
+			height: 35px;
+
+		}
+
+		.avatar-icon img {
+			width: 100%;
+			border-radius: 50%;
+		}
+
+		.running-bar {
+			border-radius: 5px;
+			height: 20px;
+			background-color: #80808047;
+		}
+
+		#progress {
+			border-radius: 5px;
+			background-color: #71ff71;
+			height: 100%;
+			text-align: center;
+
+		}
+
+		.task-card {
+			border-radius: 5px;
+			box-shadow: 0 2px 8px 0 rgba(0,253,0,0.4);
+		}
+
+
+
+		#check-icon {
+			width: 25px;
+			height: 25px;		
+		}
+		#check {
+			margin-top: 10px;
+		}
+
+
+/*Team.html CSS*/
+
+		.team-card {
+			width: 150px;
+			height: 300px;
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+		}
+	</style>			
+	</head>
+	<body>
+		<div class="container">
+			<ul id="gn-menu" class="gn-menu-main">
+				<li class="gn-trigger">
+					<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
+					<nav class="gn-menu-wrapper">
+						<div class="gn-scroller">
+							<ul class="gn-menu">
+									<a class="team">Team</a>
+								</li>
+
+								<li><a class="room">Room</a></li>
+							</ul>
+						</div><!-- /gn-scroller -->
+					</nav>
+				</li>
+				<li><a href="#">Home</a></li>
+				<li><a href="#">Sign up</a></li>
+				<li><a href="#">Sign in</a></li>
+				<li><a href="#">Chatbox</a></li>
+				<li><a href="#">People</a></li>
+				<li><a href="#">About us</a></li>
+
+				
+			</ul>
+		</div><!-- /container -->
+
+		<script src="{{url_for('static',filename='js/classie.js')}}"></script>
+		<script src="{{url_for('static',filename='js/gnmenu.js')}}"></script>
+		<script>
+			new gnMenu( document.getElementById( 'gn-menu' ) );
+		</script>
+
+	</body>
+</html>

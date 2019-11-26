@@ -1,0 +1,62 @@
+/* myteam.html CSS */
+.avatar-icon {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  margin-right: 15px;
+
+}
+
+.add-icon {
+  position: relative;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  background-color: #a8a7a83b;
+}
+
+.add-icon:hover {
+  cursor: pointer;
+  background-color: #625e5e54;
+}
+
+.avatar-icon img {
+  width: 100%;
+  border-radius: 50%;
+}
+
+.running-bar {
+  border-radius: 25px;
+  height: 25px;
+  border: 1px #380e7f solid;
+
+}
+
+#progress-run {
+  border-radius: 25px;
+  background-color: #f45905;
+  height: 100%;
+  text-align: center;
+
+}
+
+
+.task-card {
+  height: 165px;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px 0 rgba(0,253,0,0.4);
+}
+#task .card {
+  margin-bottom: 200px;
+}
+
+
+#check-icon {
+  width: 25px;
+  height: 25px;   
+}
+#check {
+  margin-top: 10px;
+}
+

@@ -14,6 +14,24 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <!-- Custom styles for this template-->
   <link href="{{ url_for('static', filename="css/css.css")}}" rel="stylesheet">
+  <style type="text/css">
+    /*Layout CSS*/
+
+    #navbar-custom a {
+      color: white ;
+      text-decoration: none ;
+      margin-left: 10px;
+    }
+
+    .section-custom {
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+    
+    .custom-section {
+      min-height: 300px;
+    }
+  </style>       
 </head>
 
 <body id="page-top">
@@ -34,6 +52,7 @@
         <div>
           {% if current_user.is_authenticated %}
             <a  href="{{ url_for('home') }}" class="mr-5">Home</a>
+            <a href="{{url_for('team')}}" class="mr-5">My team</a>
             <a  href="{{ url_for('profile') }}" class="mr-5">Profile</a>
             <a href="{{ url_for('logout') }}">Sign Out</a>
           {% else %}
@@ -48,7 +67,7 @@
 
     <!-- Sidebar -->
     {% if current_user.is_authenticated %}
-        <ul class="sidebar navbar-nav">
+        <ul class="sidebar navbar-nav drop">
             <li class="nav-item active">
                 <a class="nav-link" href="#">
                     <span>Team</span>
@@ -78,7 +97,8 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        {% block content %} {% endblock %}
+                {% block content %} {% endblock %}
+
     </div>
 
 

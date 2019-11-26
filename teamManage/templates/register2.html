@@ -154,20 +154,10 @@
              </script>
     </head>
     <body>
+        {% extends "layout.html" %}
+
         <div class="container">
-
-            <!-- Codrops top bar -->
-            <div class="codrops-top">                
-                <div class="clr"></div>
-            </div>
-            <!--/ Codrops top bar -->
-            <header>
-                <h1>Team Management Login<span><strong></strong></span></h1>
-				<nav class="codrops-demos">
-					<span>Click  <strong>"Register"</strong> to join us.</span>					
-				</nav>
-            </header>
-
+    {%block content%}
             <section>				
                 <div id="container_demo" >
                     <!-- hidden anchor to stop jump-->
@@ -359,5 +349,7 @@
 </div>
 <div id="Div1">
 </div>
+{%endblock content%}
     </body>
+}
 </html>

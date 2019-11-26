@@ -1,18 +1,53 @@
-{% extends "layout.html" %}
-{% block content %}
-	<form action="" method="POST">
-		{{ form.hidden_tag() }}
-		<div>
-			{{form.email.label}}
-			{{form.email}}
-		</div>
-		<div>
-			{{form.password.label}}	
-			{{form.password}}
-		</div>	
-		<div>
-			{{form.submit}}
-		</div>
-	</form>
 
-{% endblock %}	
+    	{%extends "layout.html"%}
+
+        	{%block content%}
+        	<link href="{{ url_for('static', filename="css/login-register/login-register.css")}}" rel="stylesheet">
+
+            <section>				
+            	<div class="register-login-page">
+				  	<div class="form">
+				 
+				    <form class="register-login-form" method="POST">
+				    	<h3>Sign In</h3>
+				    	{{ form.hidden_tag() }}
+				       		<div>
+			                   
+			                    {% if form.email.errors %}
+			                        {{ form.email(class="form-control form-control-lg is-invalid",placeholder="email") }}
+                        		<div class="invalid-feedback">
+                            		{% for error in form.email.errors %}
+                                		<span>{{ error }}</span>
+                            		{% endfor %}
+                        		</div>
+                    			{% else %}
+                        			{{ form.email(class="form-control form-control-lg",placeholder="email") }}
+                    			{% endif %}
+                			</div>
+			                <div>
+			                  
+			                    {% if form.password.errors %}
+			                        {{ form.password(class="form-control form-control-lg is-invalid",placeholder="password") }}
+			                        <div class="invalid-feedback">
+			                            {% for error in form.password.errors %}
+			                                <span>{{ error }}</span>
+			                            {% endfor %}
+			                        </div>
+			                    {% else %}
+			                        {{ form.password(class="form-control form-control-lg",placeholder="password") }}
+			                    {% endif %}
+			                </div>
+			                <div>
+			                	<ul>
+			                    	<li>{{ form.remember}}</li>
+			                   		<li>{{ form.remember.label}}</li>
+			               		</ul>
+			                </div>
+				            <div class="form-group">
+				                {{ form.submit(class="button-log-reg") }}
+				            </div>
+					      <p class="message">Not Registered?<a href="{{url_for('register')}}"> Create an account</a></p>
+					   	</form>
+				  </div>
+				</div>
+{%endblock content%}
