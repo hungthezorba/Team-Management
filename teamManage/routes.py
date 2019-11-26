@@ -1,3 +1,5 @@
+import os
+import secrets
 from flask import render_template, url_for, redirect, flash, request
 from teamManage import app, db, bcrypt
 from PIL import Image
