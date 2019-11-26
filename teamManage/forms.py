@@ -12,7 +12,7 @@ class RegisterForm(FlaskForm):
 	password = PasswordField("Password", validators=[DataRequired()])
 	confirm_password = PasswordField("Confirm Password", validators=[DataRequired(),EqualTo("password")])
 	gender = RadioField("Gender", choices=[("male","Male"),("female","Female")], validators=[DataRequired()])
-	phoneNumber = IntegerField("Phone Number", validators=[DataRequired()])
+	phoneNumber = StringField('Phone Number',validators=[Length(min=0, max=15)], widget=html5.NumberInput())
 	submit = SubmitField("Sign Up")
 
 	def validate_username(self,username):

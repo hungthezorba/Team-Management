@@ -1,5 +1,6 @@
 from flask import render_template, url_for, redirect, flash, request
 from teamManage import app, db, bcrypt
+from PIL import Image
 from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm
 from teamManage.models import User, Team, Task
 from flask_login import login_user, current_user, login_required, logout_user

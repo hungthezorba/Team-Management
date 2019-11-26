@@ -8,7 +8,7 @@
                     <div class="media-body mb-5 ml-5  pl-5">
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary user-edit" data-toggle="modal" data-target="#UpdateProfileModal"
-                                data-username="{{ current_user.username }}" data-phoneNumber="{{ current_user.phoneNumber }}"
+                                data-username="{{ current_user.username }}" data-phonenumber="{{ current_user.phoneNumber }}"
                                 data-gender="{{ current_user.gender }}" data-biography="{{ current_user.biography }}">
                             Update Profile
                         </button>
@@ -125,7 +125,7 @@
     $('#UpdateProfileModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var username = button.data('username')
-        var phoneNumber = button.data('phoneNumber')
+        var phoneNumber = button.data('phonenumber')
         var gender = button.data('gender')// Extract info from data-* attributes
         var biography = button.data('biography')
         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
@@ -137,5 +137,4 @@
         modal.find('.modal-body #biography').val(biography)
 })
 </script>
->>>>>>> 3a4acf1cb1e2aa7ff49ddc8fcd6116f22ae2aaef
 {% endblock content %}
