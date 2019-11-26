@@ -7,7 +7,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link rel="shortcut icon" href="images/rose.png">
         <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/login-register/demo.css')}}"/>
-        <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/login-register/style.css')}}" />
+       
 		<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/login-register/animate-custom.css')}}" />
 		<link href="//fonts.googleapis.com/css?family=Quicksand:300,400,600,700" rel="stylesheet" type="text/css">
 
@@ -154,21 +154,13 @@
              </script>
     </head>
     <body>
-        {% extends "layout2.html" %}
+        {% extends "layout.html" %}
         <div class="container">
         {% block content %}
 
             <!-- Codrops top bar -->
-            <div class="codrops-top">                
-                <div class="clr"></div>
-            </div>
+
             <!--/ Codrops top bar -->
-            <header>
-                <h1>Team Management Login<span><strong></strong></span></h1>
-				<nav class="codrops-demos">
-					<span>Click  <strong>"Register"</strong> to join us.</span>					
-				</nav>
-            </header>
 
             <section>				
                 <div id="container_demo" >
@@ -179,7 +171,7 @@
                         <div id="login" class="animate form">
                             <form  autocomplete="on" method="POST" action=""> 
                                 {{ form.hidden_tag() }}
-                                <strong><h1>Login team</h1></strong>
+                                <strong><h1>Login</h1></strong>
                                 <p> 
                                     <label for="username" class="uname" data-icon="u" > Email </label>
                                     <div id="username" name="username">

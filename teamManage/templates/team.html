@@ -1,6 +1,7 @@
-{% extends "layout2.html" %}
+{% extends "layout.html" %}
 {% block content %}
-<div>
+<link href="{{ url_for('static', filename="css/team/team.css")}}" rel="stylesheet">
+<div class="custom-section">
 	<h3>My Team</h3>
 	{% for i in range((team_data)|length) %}	
 	<a href="{{url_for('myTeam',team_id=team_data[i]['id'])}}" class="custom-card">
@@ -25,7 +26,7 @@
 	</a>
 	{% endfor %}
 </div>
-<div>
+<div class="custom-section">
 	<h3>Create A New Team<h3>
 		<a href="{{url_for('create_team')}}">
 		<div id="create-team" class="team-card" style="text-align: center;">

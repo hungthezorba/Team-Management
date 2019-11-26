@@ -1,48 +1,59 @@
-{% extends "layout2.html" %}
-{% block content %}
-	<form action="" method="POST">
-		{{ form.hidden_tag() }}
-		<div>
-			{{form.username.label}}
-			{{form.username}}
-			{% if form.errors %}
-				{% for error in form.username.errors %}
-					<span>{{error}}</span>
-				{% endfor %}
-			{% endif %}
-		</div>
-		<div>
-			{{form.email.label}}
-			{{form.email}}
-			{% if form.errors %}
-				{% for error in form.email.errors %}
-					<span>{{error}}</span>
-				{% endfor %}
-			{% endif %}
-		</div>
-		<div>
-			{{form.phoneNumber.label}}
-			{{form.phoneNumber}}
-			{% if form.errors %}
-				{% for error in form.email.errors %}
-					<span>{{error}}</span>
-				{% endfor %}
-			{% endif %}
-		</div>
-		<div>
-			{{form.password.label}}	
-			{{form.password}}	
-		</div>
-		<div>
-			{{form.confirm_password.label}}	
-			{{form.confirm_password}}	
-		</div>
-		<div>
-			{{form.gender.label}}	
-			{{form.gender}}	
-		</div>		
-		<div>
-			{{form.submit}}	
-		</div>
-	</form>
-{% endblock %}	
+
+    	{%extends "layout.html"%}
+
+        	{%block content%}
+        	<link href="{{ url_for('static', filename="css/login-register/login-register.css")}}" rel="stylesheet">
+
+            <section>				
+            	<div class="register-page">
+				  	<div class="form">
+				 
+				    <form class="register-form" method="POST">
+				    	<h3>Sign Up</h3>
+				    	{{ form.hidden_tag() }}
+				    	<div>
+				       		{{form.username(type="text", placeholder="username")}}
+			       				{% if form.errors %}
+									{% for error in form.username.errors %}
+									<span>{{error}}</span>
+								{% endfor %}
+							{% endif %}
+						</div>
+						<div>
+		       				{{form.email(placeholder="email")}}
+				     	  		{% if form.errors %}
+								{% for error in form.username.errors %}
+									<span>{{error}}</span>
+								{% endfor %}
+							{% endif %}
+
+						</div>	
+						<div>
+				       		{{form.phoneNumber(placeholder="phone number")}}
+						
+							{% if form.errors %}
+								{% for error in form.username.errors %}
+									<span>{{error}}</span>
+								{% endfor %}
+							{% endif %}
+						</div>
+						<div>
+				       		{{form.password(placeholder="password")}}
+						</div>
+						<div>
+					       	{{form.confirm_password(placeholder="confirm password")}}
+						</div>
+						<div>
+				       		{{form.gender}}
+				   		</div>
+				   		<div>
+				      		{{form.submit(class="button-log-reg")}}
+				  		</div>
+				      <p class="message">Already have an account?<a href="{{url_for('login')}}"> Login Here</a></p>
+				   	</form>
+				  </div>
+				</div>
+{%endblock content%}
+    </body>
+}
+</html>

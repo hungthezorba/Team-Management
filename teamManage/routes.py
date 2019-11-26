@@ -36,7 +36,7 @@ def login():
 		else:
 			flash("Login unsucessful! Please check your email and password","danger")
 			return redirect(url_for("login"))
-	return render_template("login2.html", title="Login", form=form)
+	return render_template("login.html", title="Login", form=form)
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -229,9 +229,9 @@ def delete_team(team_id):
 	team = Team.query.get_or_404(team_id)
 	for member in team.members.all():
 		team.members.remove(member)
-
-		db.session.commit()
+	for task in team.tasks:
+		db.session.delete(task)
 	db.session.delete(team)
 	db.session.commit()
-	return redirect(url_for("myTeam"))
+	return redirect(url_for("team"))
 
