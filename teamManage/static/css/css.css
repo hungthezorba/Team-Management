@@ -36,6 +36,13 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
 
 html {
   font-family: sans-serif;
