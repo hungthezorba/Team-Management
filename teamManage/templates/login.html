@@ -2,8 +2,6 @@
     	{%extends "layout.html"%}
 
         	{%block content%}
-        	<link href="{{ url_for('static', filename="css/login-register/login-register.css")}}" rel="stylesheet">
-
             <section>				
             	<div class="register-login-page">
 				  	<div class="form">
@@ -37,9 +35,9 @@
 			                        {{ form.password(class="form-control form-control-lg",placeholder="password") }}
 			                    {% endif %}
 			                </div>
-			                <div>
+			                <div class="form-group">
 			                	<ul>
-			                    	<li>{{ form.remember}}</li>
+			                    	<li style="margin-right: 10px;">{{ form.remember}}</li>
 			                   		<li>{{ form.remember.label}}</li>
 			               		</ul>
 			                </div>

@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="row">
-        <div class="col-md-4">
-            <div class="media-left">
+        <div class="media col-md-4">
+            <div class="media-left" style="text-align: center;">
                 <img class="rounded-circle account-img m-4" src={{ profile_image }}>
                 {% if current_user.id == user.id %}
-                    <div class="media-body mb-5 ml-5  pl-5">
+                    <div>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-primary user-edit" data-toggle="modal" data-target="#UpdateProfileModal"
                                 data-username="{{ current_user.username }}" data-phonenumber="{{ current_user.phoneNumber }}"

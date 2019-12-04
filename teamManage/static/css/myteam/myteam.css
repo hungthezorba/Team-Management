@@ -21,9 +21,10 @@
   background-color: #625e5e54;
 }
 
-.avatar-icon img {
-  width: 100%;
+.avatar-icon a img {
   border-radius: 50%;
+  width: 50px;
+  height: 50px;
 }
 
 .running-bar {
@@ -41,14 +42,25 @@
 
 }
 
+.card-wrapper {
+    overflow-y: auto;
+    max-height:361px;
+    border-top: 1px solid;
+}
 
 .task-card {
-  height: 165px;
-  border-radius: 5px;
-  box-shadow: 0 2px 8px 0 rgba(0,253,0,0.4);
+  height: 120px;
+  border-radius: 3px;
+  border-bottom: 1px solid black;
+
 }
-#task .card {
-  margin-bottom: 200px;
+
+.task-card-body {
+  margin-left: 15px;
+}
+
+#task .doing-complete {
+  margin-bottom: 50px;
 }
 
 
@@ -58,5 +70,24 @@
 }
 #check {
   margin-top: 10px;
+}
+
+.member-contribution {
+  width: 100%;
+}
+
+.contribution-bar {
+  height: 15px;
+  display: inline-block;
+  border-radius: 5px;
+}
+
+.task-done {
+  display: inline-block;
+}
+
+.member-menu {
+  display: none;
+  color: yellow;
 }
 

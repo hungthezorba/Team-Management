@@ -6,6 +6,7 @@ from PIL import Image
 from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm
 from teamManage.models import User, Team, Task
 from flask_login import login_user, current_user, login_required, logout_user
+from datetime import datetime, timedelta
 import json
 
 @app.route("/")
@@ -35,7 +36,7 @@ def login():
 		if user and bcrypt.check_password_hash(user.password, form.password.data):
 			login_user(user)
 			flash("Login successful!", "success")
-			return redirect(url_for("home"))
+			return redirect(url_for("team"))
 		else:
 			flash("Login unsucessful! Please check your email and password","danger")
 			return redirect(url_for("login"))
@@ -138,29 +139,66 @@ def myTeam(team_id):
 	form_add_task = TaskForm()
 	form_update_task = TaskForm()
 	tasks = team.tasks
+	members = team.members
+	time = datetime.utcnow()
 	progress = 0 
-
+	member_data = []
+	task_data = []
+	totalTaskComplete = 0
+	#Task Processing
+	i = 0
 	for task in tasks:
+		task_data.append({})
+		create_in = datetime.utcnow() - task.date_created
+	
 		if task.status == True:
+			complete_in = datetime.utcnow() - task.date_completed
+			totalTaskComplete += 1
 			progress += 1
+			task_data[i]["date_completed_day"] = int(round(divmod(complete_in.days * 86400 + complete_in.seconds, 60)[0] / 1440))
+			task_data[i]["date_completed_hour"] = int(round(divmod(complete_in.days * 86400 + complete_in.seconds, 60)[0] / 60))
+			task_data[i]["date_completed_minute"] = divmod(complete_in.days * 86400 + complete_in.seconds, 60)[0]
+			task_data[i]["date_completed_second"] = divmod(complete_in.days * 86400 + complete_in.seconds, 60)[1]
+			task_data[i]["complete_by"] = task.completeBy.username
+			task_data[i]["profile_image"] = task.completeBy.profile_image
+
+		task_data[i]["id"] = task.id
+		task_data[i]["name"] = task.name
+		task_data[i]["status"] = task.status
+		task_data[i]["description"] = task.description
+		task_data[i]["date_created_day"] = int(round(divmod(create_in.days * 86400 + create_in.seconds, 60)[0] / 1440))
+		task_data[i]["date_created_hour"] = int(round(divmod(create_in.days * 86400 + create_in.seconds, 60)[0] / 60))
+		task_data[i]["date_created_minute"] = divmod(create_in.days * 86400 + create_in.seconds, 60)[0]
+		task_data[i]["date_created_second"] = divmod(create_in.days * 86400 + create_in.seconds, 60)[1]
+
+		i += 1
 	if len(tasks) == 0:
 		progress = 100
 	else:
 		progress = round(progress / len(tasks) * 100)
 	
-
-
-	
+	i = 0 #index in member_data
+	#Member Contribution
+	for member in members:
+		member_data.append({})
+		member_data[i]['name'] = member.username
+		taskDone = 0
+		for task in tasks:
+			if task.completeBy:
+				if task.completeBy.username == member.username:
+					taskDone += 1
+		member_data[i]['taskDone'] = taskDone
+		i += 1
 
 	#Separate 2 form validation
 	if form_add_member.submit_member.data and form_add_member.validate(): 
 		member_in_team = []
-		members = form_add_member.teamMembers.data.split(', ')
+		membersAdd = form_add_member.teamMembers.data.split(', ')
 
 		for member in team.members.all(): #find the member in team
 			member_in_team.append(member.username)
 
-		for member in members: 
+		for member in membersAdd: 
 			if not (member in member_in_team): # a condition to check if member is already in the team or not
 				user = User.query.filter_by(username=member).first() # those line will ensure that the DB wont have any duplicated rows
 				team.members.append(user)
@@ -182,7 +220,10 @@ def myTeam(team_id):
 		form_add_member=form_add_member, 
 		form_add_task=form_add_task,
 		form_update_task=form_update_task,
-		progress=progress
+		progress=progress,
+		member_data=member_data,
+		totalTaskComplete=totalTaskComplete,
+		task_data=task_data
 		)	
 
 
@@ -204,6 +245,8 @@ def updateTask(team_id,task_id):
 def completeTask(team_id,task_id):
 	task = Task.query.get_or_404(task_id)
 	task.status = True
+	task.completeBy = current_user
+	task.date_completed = datetime.utcnow()
 	db.session.commit()
 	return redirect(url_for("myTeam",team_id=task.inTeam.id))
 
@@ -214,7 +257,7 @@ def create_team():
 	form = TeamForm()
 	if form.validate_on_submit():
 		members = form.teamMembers.data.split(', ')
-		team = Team(name=form.teamName.data, description=form.teamDescription.data)
+		team = Team(name=form.teamName.data, description=form.teamDescription.data,teamLeader=current_user)
 		db.session.add(team)
 		for member in members: #looping in the adding member field
 			if member == '':
@@ -230,11 +273,24 @@ def create_team():
 @app.route("/team/<int:team_id>/delete",methods=["GET","POST"])
 def delete_team(team_id):
 	team = Team.query.get_or_404(team_id)
-	for member in team.members.all():
-		team.members.remove(member)
-	for task in team.tasks:
-		db.session.delete(task)
-	db.session.delete(team)
-	db.session.commit()
-	return redirect(url_for("team"))
+	if team.teamLeader == current_user:
+		for member in team.members.all():
+			team.members.remove(member)
+		for task in team.tasks:
+			db.session.delete(task)
+		db.session.delete(team)
+		db.session.commit()
+		return redirect(url_for("team"))
+
+	else:
+		flash('You are not the team leader','danger')
+		return redirect(url_for("myTeam",team_id=team.id))
+
+@app.route("/team/<int:team_id>/leave",methods=["GET","POST"])
+def leave_team(team_id):
+	team = Team.query.get_or_404(team_id)
+	if current_user in team.members.all():
+		team.members.remove(current_user)
+		db.session.commit()
+		return redirect(url_for("team"))
 

@@ -1,37 +1,40 @@
 {% extends "layout.html" %}
 {% block content %}
-<link href="{{ url_for('static', filename="css/team/team.css")}}" rel="stylesheet">
-<div class="custom-section">
-	<h3>My Team</h3>
-	{% for i in range((team_data)|length) %}	
-	<a href="{{url_for('myTeam',team_id=team_data[i]['id'])}}" class="custom-card">
-		<div class="team-card">
-			<div class="team-card-content">
-				<h3 class="card-header">{{team_data[i]["name"]}}</h3>
-				<div style="margin-top: 10px;">
-					<p style="display:inline-block"> 
-						{{team_data[i]["members"]}}
-						<img class="team-icon"src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Team_work_icon.svg/1024px-Team_work_icon.svg.png" />
-					</p> 
-					<p style="display: inline-block;"> 
-						{{team_data[i]["tasks"]}}
-						<img class="team-icon"src="https://img.icons8.com/material-sharp/452/task-planning.png" />
-					</p> 
-				</div>
-				<div class="running-bar-small" >
-					<div id="progress-run" style="width: {{team_data[i]['progress']}}%" ></div>
+<section>
+	<div class="wrap-custom">
+	<div class="custom-section">
+		<h3>Create A New Team</h3>
+			<a href="{{url_for('create_team')}}">
+			<div id="create-team" class="team-card" style="text-align: center;">
+				<img style="max-width:100%; max-height: 100%"src="https://cdn1.iconfinder.com/data/icons/health-care-medical/64/Healthcare__medical-07-512.png" />
+			</div>
+			</a>
+	</div>
+	<div class="custom-section">
+		<h3>My Team</h3>
+		{% for i in range((team_data)|length) %}	
+		<a href="{{url_for('myTeam',team_id=team_data[i]['id'])}}" class="custom-card">
+			<div class="team-card">
+				<div class="team-card-content">
+					<h3 class="card-header">{{team_data[i]["name"]}}</h3>
+					<div style="margin-top: 10px;">
+						<p style="display:inline-block"> 
+							{{team_data[i]["members"]}}
+							<img class="team-icon"src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Team_work_icon.svg/1024px-Team_work_icon.svg.png" />
+						</p> 
+						<p style="display: inline-block;"> 
+							{{team_data[i]["tasks"]}}
+							<img class="team-icon"src="https://img.icons8.com/material-sharp/452/task-planning.png" />
+						</p> 
+					</div>
+					<div class="running-bar-small" >
+						<div id="progress-run" style="width: {{team_data[i]['progress']}}%" ></div>
+					</div>
 				</div>
 			</div>
-		</div>
-	</a>
-	{% endfor %}
-</div>
-<div class="custom-section">
-	<h3>Create A New Team<h3>
-		<a href="{{url_for('create_team')}}">
-		<div id="create-team" class="team-card" style="text-align: center;">
-			<img style="max-width:100%; max-height: 100%"src="https://cdn1.iconfinder.com/data/icons/health-care-medical/64/Healthcare__medical-07-512.png" />
-		</div>
 		</a>
+		{% endfor %}
+	</div>
 </div>
+</section>
 {% endblock %}
