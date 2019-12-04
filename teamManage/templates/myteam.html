@@ -1,15 +1,17 @@
 {% extends "layout.html" %}
 {% block content%}
-  <link href="{{ url_for('static', filename="css/myteam/myteam.css")}}" rel="stylesheet">
 
-<div style="padding: 20px;">
+<div class="wrap-custom">
 		<section id="team-header">
 			<div class="container">
 				<section class="section-custom" id="team-name">
 					<div>
-						<h2>{{ team.name }}</h2>
-						<form  method="POST" action="{{url_for('delete_team',team_id=team.id)}}">
+						<h2 onclick="clicking">{{ team.name }}</h2>
+						<form style="display: inline-block;"  method="POST" action="{{url_for('delete_team',team_id=team.id)}}">
 							<input type="submit" value="Delete" class="btn btn-danger">
+						</form>
+						<form style="display: inline-block" method="POST" action="{{url_for('leave_team',team_id=team.id)}}">
+							<input type="submit" value="Leave" class="btn btn-danger">
 						</form>
 					</div>
 				</section>
@@ -21,8 +23,13 @@
 						</h2>
 						<div>
 						{% for member in team.members %}					
-							<div class="avatar-icon" >
-								<a href="#"><img src="{{url_for('static', filename='profile_pics/' + member.profile_image)}}"/></a>
+							<div id="test" class="avatar-icon" >
+								<a href="{{url_for('other_profile',user_id=member.id)}}"><img class="toggle-member" src="{{url_for('static', filename='profile_pics/' + member.profile_image)}}"/></a>
+								<div class="member-menu">
+									<ul>
+										<li>Remove Member</li>
+									</ul>
+								</div>
 							</div>
 						{% endfor %}
 						</div>
@@ -39,47 +46,79 @@
 							Progress
 						</h3>
 						<div class="running-bar" >
-							<div id="progress-run" style="width: {{progress}}%" >{{progress}}%</div>
-							<p style="float: right;">Due in 5 days</p>						
-							
+							<div id="progress-run" style="width: {{progress}}%" >{{progress}}%</div>							
 						</div>
 						<div id="check">
 							<p>
-								3/12
+								{{totalTaskComplete}}/{{team.tasks | length}}
 								<img id="check-icon"  src="https://cdn4.iconfinder.com/data/icons/delivery-1-1/512/clipboard-512.png" />
 							</p>
 						</div>
 					</div>
 				</section>
 				<!-- Tasks -->
-				<section id="task" class="section-custom">
-					<div>
-						<h2>Task
-							<img data-toggle="modal" data-target="#AddingTask" class="add-icon" src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
-						</h2>
-						<div class="card" style="overflow-y: auto; max-height:375px;" id="doing-task">
-							<div class="list-group list-group-flush">
-								{% for task in team.tasks %}
-									{% if task.status == False %}
-									<div class="task-card list-group-item">
-										<h4>{{ task.name }}</h4>
-										<p>{{ task.description }}</p>
-								    	<a href="{{url_for('completeTask',team_id=team.id,task_id=task.id)}}" class="btn btn-primary">Mark as complete</a>
-										<p>Created 5 days ago</p>
+				<section class="section-custom">
+					<div id="task">
+						<div class="doing-complete" id="doing-task">
+							<h2>Task
+								<img data-toggle="modal" data-target="#AddingTask" class="add-icon" src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
+							</h2>
+							<div class="card-wrapper" >
+								{% for i in range((task_data)|length) %}
+									{% if task_data[i]["status"] == False %}
+									<div class="task-card">
+										<div class="task-card-body">
+											<h4>{{ task_data[i]["name"] }}</h4>
+											<p>{{ task_data[i]["description"] }}</p>
+									    	<a href="{{url_for('completeTask',team_id=team.id,task_id=task_data[i]['id'])}}" class="btn btn-primary">Mark as complete</a>
+											<p>{% if task_data[i]["date_created_day"] >= 1 %}
+													Created {{task_data[i]["date_created_day"]}} days ago
+													{% else %}
+													{% if task_data[i]["date_created_hour"] >= 1  %}
+														Created {{task_data[i]["date_created_hour"]}} hours ago
+													{% else %}
+														{% if task_data[i]["date_created_minute"] >= 1 %}
+															Created {{task_data[i]["date_created_minute"]}} minutes ago
+														{% else %}
+															Created {{task_data[i]["date_created_second"]}} seconds ago
+														{% endif %}
+													{% endif %}
+												{% endif %}</p>
+										</div>
 									</div>
 									{% endif %}
 								{% endfor %}
 							</div>
 						</div>
-						<h2>Complete</h2>
-						<div class="card" style="overflow-y: auto; max-height:375px;" id="complete-task">
-							<div class="list-group list-group-flush">
-								{% for task in team.tasks %}
-									{% if task.status == True %}
-									<div class="task-card list-group-item">
-										<h4>{{ task.name }}</h4>
-										<p>{{ task.description }}</p>
-										<p>Completed 5 days ago</p>
+						<div class="doing-complete" id="complete-task">
+							<h2>Complete</h2>
+							<div class="card-wrapper">
+								{% for i in range((task_data)|length)%}
+									{% if task_data[i]["status"] == True %}
+									<div class="task-card">
+										<div class="task-card-body">
+											<h3>{{ task_data[i]["name"] }}</h3>
+											<div style="display: inline-block;">
+												<p>
+													{% if task_data[i]["date_completed_day"] >= 1 %}
+													Completed {{task_data[i]["date_completed_day"]}} days ago by {{task_data[i]["complete_by"]}}
+													{% else %}
+														{% if task_data[i]["date_completed_hour"] >= 1  %}
+															Completed {{task_data[i]["date_completed_hour"]}} hours ago by {{task_data[i]["complete_by"]}}
+														{% else %}
+															{% if task_data[i]["date_completed_minute"] >= 1 %}
+																Completed {{task_data[i]["date_completed_minute"]}} minutes ago by {{task_data[i]["complete_by"]}}
+															{% else %}
+																Completed {{task_data[i]["date_completed_second"]}} seconds ago by {{task_data[i]["complete_by"]}}
+															{% endif %}
+														{% endif %}
+													{% endif %}
+												</p>
+											</div>
+											<div class="avatar-icon">
+												<a><img src="{{url_for('static', filename='profile_pics/' + task_data[i]['profile_image'])}}"/></a>
+											</div>
+										</div>
 									</div>
 									{% endif %}
 								{% endfor %}
@@ -87,9 +126,25 @@
 						</div>
 					</div>
 				</section>
+				<section>
+					<div class="section-custom">
+						<h2>Contribution</h2>
+							{% for i in range((member_data)|length) %}
+								<h5>{{member_data[i]['name']}}</h5>
+								<div class="member-contribution">
+									<div class="contribution-bar" style="width:{{member_data[i]['taskDone']*10}}%;" >
+									</div>
+									<div class="task-done">
+										<h5 style=>{{member_data[i]['taskDone']}}</h5>
+									</div>
+								</div>	
+							{%endfor%}
+					</div>
+				</section>
 			</div>
 		</section>
 </div>
+  
 <!-- Modal for adding task -->
 <div class="modal fade" id="AddingTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   	<div class="modal-dialog" role="document">
@@ -151,4 +206,5 @@
     	</div>
 	</div>
 </div>
+<script type="text/javascript" src="{{url_for('static',filename='js/myteam/myteam.js')}}"></script>
 {% endblock content%}

@@ -4,15 +4,16 @@
     color: inherit;
   }
 
+
 .team-card {
   position: relative;
-  margin-right: 20px;
+  margin: 10px 20px 10px 0;
   display: inline-block;
   width: 300px;
   height: 175px;
   border-radius: 7px;
   transition: 0.2s ease-in;
-  background-color: #c70d3a;
+  background-color: #aeaeae;
   border: 1px solid #cccccc;
 }
 
@@ -40,6 +41,10 @@
 #create-team.team-card:hover {
   border: 1px solid black;
 
+}
+
+#create-team img {
+  opacity: 0.7;
 }
 
 .running-bar-small {

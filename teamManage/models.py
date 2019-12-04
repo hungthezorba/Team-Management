@@ -1,5 +1,6 @@
 from teamManage import db, login_manager
 from flask_login import UserMixin
+from datetime import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -22,6 +23,8 @@ class User(db.Model, UserMixin):
 	member = db.relationship("Team", cascade="all", secondary=UserTeam,backref=db.backref("members",lazy="dynamic"))
 	phoneNumber = db.Column(db.String, unique=True, nullable=True)
 	biography = db.Column(db.String, unique=False, nullable=True)
+	leaders = db.relationship("Team", backref="teamLeader", lazy=True)
+	taskComplete = db.relationship("Task", backref="completeBy", lazy=True)
 
 	def __repr__(self):
 		return (f" ({self.username}, {self.email}, {self.gender}, {self.phoneNumber}, {self.member})")
@@ -30,7 +33,8 @@ class Team(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(20),unique=True, nullable=False)
 	description = db.Column(db.Text)
-	tasks = db.relationship("Task", backref="inTeam", lazy=True) 
+	tasks = db.relationship("Task", backref="inTeam", lazy=True)
+	leader_id = db.Column(db.Integer, db.ForeignKey("user.id"),nullable=False)
 
 	def __repr__(self):
 		return (f" ({self.name}, {self.description}, {self.tasks})")
@@ -41,8 +45,11 @@ class Task(db.Model):
 	description = db.Column(db.Text, nullable=False)
 	status = db.Column(db.Boolean, nullable=False, default=False)
 	team_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
+	date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+	date_completed = db.Column(db.DateTime, nullable=True)
+	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 	def __repr__(self):
-		return (f" ({self.name}, {self.description}, {self.status}, {self.team_id})")
+		return (f" ({self.name}, {self.description}, {self.status}, {self.team_id}), {self.user_id}")
 
 #class Post(db.Model)
