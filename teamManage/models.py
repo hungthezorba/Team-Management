@@ -13,6 +13,13 @@ UserTeam = db.Table(
 	db.PrimaryKeyConstraint('userId', 'teamId')
 )
 
+UserTask = db.Table(
+	"UserTask",
+	db.Column("userId", db.Integer, db.ForeignKey("user.id")),
+	db.Column("taskId", db.Integer, db.ForeignKey("task.id")),
+	db.PrimaryKeyConstraint('userId', 'taskId')
+)
+
 class User(db.Model, UserMixin):
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(20), unique=True, nullable=False)
@@ -20,11 +27,11 @@ class User(db.Model, UserMixin):
 	profile_image = db.Column(db.String(20),nullable=False, default="default.jpg")
 	password = db.Column(db.String(60), nullable=False)
 	gender = db.Column(db.String(8), nullable=False)
-	member = db.relationship("Team", cascade="all", secondary=UserTeam,backref=db.backref("members",lazy="dynamic"))
+	member = db.relationship("Team", cascade="all", secondary=UserTeam,backref=db.backref("members",lazy="dynamic")) #Many-to-Many Relationship
 	phoneNumber = db.Column(db.String, unique=True, nullable=True)
 	biography = db.Column(db.String, unique=False, nullable=True)
-	leaders = db.relationship("Team", backref="teamLeader", lazy=True)
-	taskComplete = db.relationship("Task", backref="completeBy", lazy=True)
+	leaders = db.relationship("Team", backref="teamLeader", lazy=True) #One-to-Many Relationship
+	taskComplete = db.relationship("Task", secondary=UserTask, backref=db.backref("completeBy", lazy="dynamic")) #Many-to-Many Relationship
 
 	def __repr__(self):
 		return (f" ({self.username}, {self.email}, {self.gender}, {self.phoneNumber}, {self.member})")
@@ -33,7 +40,7 @@ class Team(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(20),unique=True, nullable=False)
 	description = db.Column(db.Text)
-	tasks = db.relationship("Task", backref="inTeam", lazy=True)
+	tasks = db.relationship("Task", backref="inTeam", lazy=True) #One-to-Many 
 	leader_id = db.Column(db.Integer, db.ForeignKey("user.id"),nullable=False)
 
 	def __repr__(self):

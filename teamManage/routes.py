@@ -3,7 +3,7 @@ import secrets
 from flask import render_template, url_for, redirect, flash, request
 from teamManage import app, db, bcrypt
 from PIL import Image
-from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm
+from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm, EditTaskForm
 from teamManage.models import User, Team, Task
 from flask_login import login_user, current_user, login_required, logout_user
 from datetime import datetime, timedelta
@@ -132,12 +132,12 @@ def team():
 	return render_template("team.html", title="Your team", teams=teams,team_data=team_data)
 
 
-@app.route("/team/<int:team_id>", methods=["GET","POST"])
+@app.route("/team/<int:team_id>", methods=["GET","POST","PUT"])
 def myTeam(team_id):
 	team = Team.query.get_or_404(team_id)
 	form_add_member = AddMemberForm()
 	form_add_task = TaskForm()
-	form_update_task = TaskForm()
+	form_edit_task = EditTaskForm()
 	tasks = team.tasks
 	members = team.members
 	time = datetime.utcnow()
@@ -159,8 +159,12 @@ def myTeam(team_id):
 			task_data[i]["date_completed_hour"] = int(round(divmod(complete_in.days * 86400 + complete_in.seconds, 60)[0] / 60))
 			task_data[i]["date_completed_minute"] = divmod(complete_in.days * 86400 + complete_in.seconds, 60)[0]
 			task_data[i]["date_completed_second"] = divmod(complete_in.days * 86400 + complete_in.seconds, 60)[1]
-			task_data[i]["complete_by"] = task.completeBy.username
-			task_data[i]["profile_image"] = task.completeBy.profile_image
+			task_data[i]["complete_by"] = []
+			task_data[i]["user_image"] = []
+			for user in task.completeBy.all():
+				task_data[i]["complete_by"].append(user.username)
+				task_data[i]["user_image"].append(user.profile_image)
+
 
 		task_data[i]["id"] = task.id
 		task_data[i]["name"] = task.name
@@ -185,8 +189,9 @@ def myTeam(team_id):
 		taskDone = 0
 		for task in tasks:
 			if task.completeBy:
-				if task.completeBy.username == member.username:
-					taskDone += 1
+				for user in task.completeBy.all():
+					if user == member.username: #Need to work on after changing the database
+						taskDone += 1
 		member_data[i]['taskDone'] = taskDone
 		i += 1
 
@@ -211,7 +216,22 @@ def myTeam(team_id):
 		db.session.add(task)
 		db.session.commit()
 
+	# if form_edit_task.save_task.data and form_edit_task.validate():
+	# 	task = Task.query.get(form_edit_task.id.data)
+	# 	task.name = form_edit_task.name.data
+	# 	task.description = form_edit_task.description.data
+	# 	db.session.commit()
+	# 	return redirect(url_for('myTeam',team_id=team.id))
+	if request.method == 'POST':
+		if request.form.get('editId'):
+			task = Task.query.get(request.form.get('editId'))
+			task.name = request.form.get('editName')
+			task.description = request.form.get('editDescription')
+			db.session.commit()
+		return redirect(url_for('myTeam',team_id=team.id))
+			
 
+	
 
 	return render_template(
 		"myteam.html", 
@@ -219,38 +239,34 @@ def myTeam(team_id):
 		team=team, 
 		form_add_member=form_add_member, 
 		form_add_task=form_add_task,
-		form_update_task=form_update_task,
+		form_edit_task=form_edit_task,
 		progress=progress,
 		member_data=member_data,
 		totalTaskComplete=totalTaskComplete,
 		task_data=task_data
 		)	
 
+# -----------------------------TASK ROUTE -----------------------------
 
-@app.route("/team/<int:team_id>/<int:task_id>/edit", methods=["GET", "POST","PUT"])
-def updateTask(team_id,task_id):
-	task = Task.query.get_or_404(task_id)
-	form_update_task = TaskForm()
-	if form_update_task.validate_on_submit():
-		task.name = form_update_task.name.data
-		task.description = form_update_task.description.data
-		task.status = form_update_task.status.data
-		db.session.commit()
-	form_update_task.name.data	= task.name
-	form_update_task.description.data = task.description
-	form_update_task.status.data = task.status
-	return redirect(url_for("myTeam"),team_id=task.inTeam.id)
+
 
 @app.route("/team/<int:team_id>/<int:task_id>/complete", methods=["GET", "POST"])
 def completeTask(team_id,task_id):
 	task = Task.query.get_or_404(task_id)
 	task.status = True
-	task.completeBy = current_user
+	task.completeBy.append(current_user)
 	task.date_completed = datetime.utcnow()
 	db.session.commit()
 	return redirect(url_for("myTeam",team_id=task.inTeam.id))
 
+@app.route("/team/<int:team_id>/<int:task_id>/delete", methods=["GET", "POST"])
+def deleteTask(team_id,task_id):
+	task = Task.query.get_or_404(task_id)
+	db.session.delete(task)
+	db.session.commit()
+	return redirect(url_for('myTeam',team_id=team_id))
 
+# --------------------------------------------------------------------------------------
 @app.route("/team/create", methods=["GET","POST"])
 @login_required
 def create_team():
@@ -263,6 +279,7 @@ def create_team():
 			if member == '':
 				team.members.append(current_user)
 			else:
+				team.members.append(current_user)
 				newMember = User.query.filter_by(username=member).first()
 				team.members.append(newMember)
 		db.session.commit()
@@ -291,6 +308,19 @@ def leave_team(team_id):
 	team = Team.query.get_or_404(team_id)
 	if current_user in team.members.all():
 		team.members.remove(current_user)
+		if team.teamLeader.username == current_user.username:
+			if len(team.members.all()) > 0:
+				team.teamLeader = team.members[0]
 		db.session.commit()
 		return redirect(url_for("team"))
 
+@app.route("/team/<int:team_id>/remove/<int:member_id>",methods=["GET","POST"])
+def remove_member(team_id,member_id):
+	team = Team.query.get_or_404(team_id)
+	if current_user == team.teamLeader:
+		member = User.query.filter_by(id=member_id).first()
+		team.members.remove(member)
+		db.session.commit()
+	else:
+		flash('You are not the team leader','danger')
+	return redirect(url_for("myTeam",team_id=team.id))
