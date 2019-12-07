@@ -190,9 +190,9 @@ def myTeam(team_id):
 		for task in tasks:
 			if task.completeBy:
 				for user in task.completeBy.all():
-					if user == member.username: #Need to work on after changing the database
+					if user.username == member.username: #Need to work on after changing the database
 						taskDone += 1
-		member_data[i]['taskDone'] = taskDone
+		member_data[i]['taskDone'] = taskDone #Definitely need to check 
 		i += 1
 
 	#Separate 2 form validation
@@ -228,7 +228,6 @@ def myTeam(team_id):
 			task.name = request.form.get('editName')
 			task.description = request.form.get('editDescription')
 			db.session.commit()
-		return redirect(url_for('myTeam',team_id=team.id))
 			
 
 	
