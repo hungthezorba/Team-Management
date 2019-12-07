@@ -75,6 +75,12 @@ class TaskForm(FlaskForm):
 	status = BooleanField("Status")
 	submit_task = SubmitField("Add Task")
 
+class EditTaskForm(FlaskForm):
+	id = StringField('Task Id')
+	name = StringField("Task Name", validators=[DataRequired()])
+	description = TextAreaField("Task Description")
+	save_task = SubmitField("Save")
+
 class UpdateProfileForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     phoneNumber = StringField('Phone Number',validators=[Length(min=0, max=15)], widget=html5.NumberInput())

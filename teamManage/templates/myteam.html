@@ -2,209 +2,277 @@
 {% block content%}
 
 <div class="wrap-custom">
-		<section id="team-header">
-			<div class="container">
-				<section class="section-custom" id="team-name">
+	<section id="team-header">
+		<div class="container">
+			<section class="section-custom" id="team-name">
+				<div>
+					<h2 onclick="clicking">{{ team.name }}</h2>
+					<form style="display: inline-block;" method="POST"
+						action="{{url_for('delete_team',team_id=team.id)}}">
+						<input type="submit" value="Delete" class="btn btn-danger">
+					</form>
+					<form style="display: inline-block" method="POST"
+						action="{{url_for('leave_team',team_id=team.id)}}">
+						<input type="submit" value="Leave" class="btn btn-danger">
+					</form>
+				</div>
+			</section>
+			<section class="section-custom" id="members">
+				<div>
+					<h2>
+						Members
+						<img data-toggle="modal" data-target="#AddingMember" class="add-icon"
+							src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
+					</h2>
 					<div>
-						<h2 onclick="clicking">{{ team.name }}</h2>
-						<form style="display: inline-block;"  method="POST" action="{{url_for('delete_team',team_id=team.id)}}">
-							<input type="submit" value="Delete" class="btn btn-danger">
-						</form>
-						<form style="display: inline-block" method="POST" action="{{url_for('leave_team',team_id=team.id)}}">
-							<input type="submit" value="Leave" class="btn btn-danger">
-						</form>
+						{% for member in team.members %}
+						<div class="avatar-icon toggle-context-menu">
+							<a class="" href="{{url_for('other_profile',user_id=member.id)}}"><img
+									src="{{url_for('static', filename='profile_pics/' + member.profile_image)}}" /></a>
+							{% if member != team.teamLeader%}
+							<div class="member-context-menu">
+								<a class="dropdown-item"
+									href="{{url_for('remove_member',team_id=team.id, member_id=member.id)}}">Remove
+									Member</a>
+								<a class="dropdown-item" href="#">Another action</a>
+								<a class="dropdown-item" href="#">Something else here</a>
+							</div>
+							{% endif %}
+						</div>
+						{% endfor %}
 					</div>
-				</section>
-				<section class="section-custom" id="members">
-					<div>
-						<h2>
-							Members
-							<img data-toggle="modal" data-target="#AddingMember" class="add-icon" src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
+				</div>
+			</section>
+		</div>
+	</section>
+	<section id="team-body">
+		<div class="container">
+			<!-- Progress Bar -->
+			<section class="section-custom" id="progress">
+				<div>
+					<h3>
+						Progress
+					</h3>
+					<div class="running-bar">
+						<div id="progress-run" style="width: {{progress}}%">{{progress}}%</div>
+					</div>
+					<div id="check">
+						<p>
+							{{totalTaskComplete}}/{{team.tasks | length}}
+							<img id="check-icon"
+								src="https://cdn4.iconfinder.com/data/icons/delivery-1-1/512/clipboard-512.png" />
+						</p>
+					</div>
+				</div>
+			</section>
+			<!-- Tasks -->
+			<section class="section-custom">
+				<div id="task" class="row">
+					<!-- TASK DOING -->
+					<div class="doing-complete col" id="doing-task">
+						<h2>Task
+							<img data-toggle="modal" data-target="#AddingTask" class="add-icon"
+								src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
 						</h2>
-						<div>
-						{% for member in team.members %}					
-							<div id="test" class="avatar-icon" >
-								<a href="{{url_for('other_profile',user_id=member.id)}}"><img class="toggle-member" src="{{url_for('static', filename='profile_pics/' + member.profile_image)}}"/></a>
-								<div class="member-menu">
-									<ul>
-										<li>Remove Member</li>
-									</ul>
+						<div class="card-wrapper">
+							{% for i in range((task_data)|length) %}
+							{% if task_data[i]["status"] == False %}
+							<div class="task-card">
+								<div class="task-card-body">
+									<h4 id="name{{task_data[i]['id']}}">{{ task_data[i]["name"] }}</h4>
+									<p id="description{{task_data[i]['id']}}">{{ task_data[i]["description"] }}</p>
+									<a href="{{url_for('completeTask',team_id=team.id,task_id=task_data[i]['id'])}}"
+										class="btn btn-primary">Mark as complete</a>
+									<a data-toggle="modal" data-target="#EditingTask" id="{{task_data[i]['id']}}"
+										class="edit-task btn btn-primary">Edit</a>
+
+									<a href="{{url_for('deleteTask',team_id=team.id,task_id=task_data[i]['id'])}}"
+										class="btn btn-danger">Delete</a>
+
+									<p>{% if task_data[i]["date_created_day"] >= 1 %}
+										Created {{task_data[i]["date_created_day"]}} days ago
+										{% else %}
+										{% if task_data[i]["date_created_hour"] >= 1  %}
+										Created {{task_data[i]["date_created_hour"]}} hours ago
+										{% else %}
+										{% if task_data[i]["date_created_minute"] >= 1 %}
+										Created {{task_data[i]["date_created_minute"]}} minutes ago
+										{% else %}
+										Created {{task_data[i]["date_created_second"]}} seconds ago
+										{% endif %}
+										{% endif %}
+										{% endif %}</p>
 								</div>
 							</div>
-						{% endfor %}
+							{% endif %}
+							{% endfor %}
 						</div>
 					</div>
-				</section>
-			</div>
-		</section>
-		<section id="team-body">
-			<div class="container">
-				<!-- Progress Bar -->
-				<section class="section-custom" id="progress">
-					<div>
-						<h3>
-							Progress
-						</h3>
-						<div class="running-bar" >
-							<div id="progress-run" style="width: {{progress}}%" >{{progress}}%</div>							
-						</div>
-						<div id="check">
-							<p>
-								{{totalTaskComplete}}/{{team.tasks | length}}
-								<img id="check-icon"  src="https://cdn4.iconfinder.com/data/icons/delivery-1-1/512/clipboard-512.png" />
-							</p>
-						</div>
-					</div>
-				</section>
-				<!-- Tasks -->
-				<section class="section-custom">
-					<div id="task">
-						<div class="doing-complete" id="doing-task">
-							<h2>Task
-								<img data-toggle="modal" data-target="#AddingTask" class="add-icon" src="https://cdn4.iconfinder.com/data/icons/user-interface-131/32/add-512.png" />
-							</h2>
-							<div class="card-wrapper" >
-								{% for i in range((task_data)|length) %}
-									{% if task_data[i]["status"] == False %}
-									<div class="task-card">
-										<div class="task-card-body">
-											<h4>{{ task_data[i]["name"] }}</h4>
-											<p>{{ task_data[i]["description"] }}</p>
-									    	<a href="{{url_for('completeTask',team_id=team.id,task_id=task_data[i]['id'])}}" class="btn btn-primary">Mark as complete</a>
-											<p>{% if task_data[i]["date_created_day"] >= 1 %}
-													Created {{task_data[i]["date_created_day"]}} days ago
-													{% else %}
-													{% if task_data[i]["date_created_hour"] >= 1  %}
-														Created {{task_data[i]["date_created_hour"]}} hours ago
-													{% else %}
-														{% if task_data[i]["date_created_minute"] >= 1 %}
-															Created {{task_data[i]["date_created_minute"]}} minutes ago
-														{% else %}
-															Created {{task_data[i]["date_created_second"]}} seconds ago
-														{% endif %}
-													{% endif %}
-												{% endif %}</p>
-										</div>
+					<!-- TASK COMPLETED -->
+					<div class="doing-complete col" id="complete-task">
+						<h2>Complete</h2>
+						<div class="card-wrapper">
+							{% for i in range((task_data)|length)%}
+							{% if task_data[i]["status"] == True %}
+							<div class="task-card">
+								<div class="task-card-body">
+									<h3>{{ task_data[i]["name"] }}</h3>
+									<div style="display: inline-block;">
+										<p>
+											{% if task_data[i]["date_completed_day"] >= 1 %}
+											Completed {{task_data[i]["date_completed_day"]}} days ago by
+											{% for member_complete in task_data[i]['complete_by'] %}
+											{{member_complete}}
+											{%endfor%}
+											{% else %}
+											{% if task_data[i]["date_completed_hour"] >= 1  %}
+											Completed {{task_data[i]["date_completed_hour"]}} hours ago by
+											{% for member_complete in task_data[i]['complete_by'] %}
+											<!--looping through list of member who complete the task -->
+											{{member_complete}}
+											{%endfor%}
+											{% else %}
+											{% if task_data[i]["date_completed_minute"] >= 1 %}
+											Completed {{task_data[i]["date_completed_minute"]}} minutes ago by
+											{% for member_complete in task_data[i]['complete_by'] %}
+											{{member_complete}}
+											{%endfor%}
+											{% else %}
+											Completed {{task_data[i]["date_completed_second"]}} seconds ago by
+											{% for member_complete in task_data[i]['complete_by'] %}
+											{{member_complete}}
+											{%endfor%}
+											{% endif %}
+											{% endif %}
+											{% endif %}
+										</p>
 									</div>
-									{% endif %}
-								{% endfor %}
+									<div class="avatar-icon">
+										{% for image in task_data[i]['user_image'] %}
+										<a><img src="{{url_for('static', filename='profile_pics/' + image)}}" /></a>
+										{% endfor %}
+									</div>
+								</div>
 							</div>
-						</div>
-						<div class="doing-complete" id="complete-task">
-							<h2>Complete</h2>
-							<div class="card-wrapper">
-								{% for i in range((task_data)|length)%}
-									{% if task_data[i]["status"] == True %}
-									<div class="task-card">
-										<div class="task-card-body">
-											<h3>{{ task_data[i]["name"] }}</h3>
-											<div style="display: inline-block;">
-												<p>
-													{% if task_data[i]["date_completed_day"] >= 1 %}
-													Completed {{task_data[i]["date_completed_day"]}} days ago by {{task_data[i]["complete_by"]}}
-													{% else %}
-														{% if task_data[i]["date_completed_hour"] >= 1  %}
-															Completed {{task_data[i]["date_completed_hour"]}} hours ago by {{task_data[i]["complete_by"]}}
-														{% else %}
-															{% if task_data[i]["date_completed_minute"] >= 1 %}
-																Completed {{task_data[i]["date_completed_minute"]}} minutes ago by {{task_data[i]["complete_by"]}}
-															{% else %}
-																Completed {{task_data[i]["date_completed_second"]}} seconds ago by {{task_data[i]["complete_by"]}}
-															{% endif %}
-														{% endif %}
-													{% endif %}
-												</p>
-											</div>
-											<div class="avatar-icon">
-												<a><img src="{{url_for('static', filename='profile_pics/' + task_data[i]['profile_image'])}}"/></a>
-											</div>
-										</div>
-									</div>
-									{% endif %}
-								{% endfor %}
-							</div>
+							{% endif %}
+							{% endfor %}
 						</div>
 					</div>
-				</section>
-				<section>
-					<div class="section-custom">
-						<h2>Contribution</h2>
-							{% for i in range((member_data)|length) %}
-								<h5>{{member_data[i]['name']}}</h5>
-								<div class="member-contribution">
-									<div class="contribution-bar" style="width:{{member_data[i]['taskDone']*10}}%;" >
-									</div>
-									<div class="task-done">
-										<h5 style=>{{member_data[i]['taskDone']}}</h5>
-									</div>
-								</div>	
-							{%endfor%}
+				</div>
+			</section>
+			<section>
+				<div class="section-custom">
+					<h2>Contribution</h2>
+					{% for i in range((member_data)|length) %}
+					<h5>{{member_data[i]['name']}}</h5>
+					<div class="member-contribution">
+						<div class="contribution-bar" style="width:{{member_data[i]['taskDone']*10}}%;">
+						</div>
+						<div class="task-done">
+							<h5 style=>{{member_data[i]['taskDone']}}</h5>
+						</div>
 					</div>
-				</section>
-			</div>
-		</section>
+					{%endfor%}
+				</div>
+			</section>
+		</div>
+	</section>
 </div>
-  
+
 <!-- Modal for adding task -->
-<div class="modal fade" id="AddingTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  	<div class="modal-dialog" role="document">
-    	<div class="modal-content">
-      		<div class="modal-header">
-        		<h5 class="modal-title" id="exampleModalLabel">Add new task</h5>
-        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          		<span aria-hidden="true">&times;</span>
-        		</button>
-      		</div>
-      	<div class="modal-body">
-        	<form action="" method="POST">
-				{{ form_add_task.hidden_tag() }}
-				<div>
-					{{ form_add_task.name.label }}
-					{{ form_add_task.name }}
-				</div>
-				<div>
-					{{ form_add_task.description.label }}
-					{{ form_add_task.description }}
-				</div>
-			    <div class="modal-footer">
-			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			        {{form_add_task.submit_task(class="btn btn-primary")}}  
-			    </div>
-	    	</form> 
-	    </div>
-    	</div>
+<div class="modal fade" id="AddingTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Add new task</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form action="" method="POST">
+					{{ form_add_task.hidden_tag() }}
+					<div>
+						{{ form_add_task.name.label }}
+						{{ form_add_task.name }}
+					</div>
+					<div>
+						{{ form_add_task.description.label }}
+						{{ form_add_task.description }}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						{{form_add_task.submit_task(class="btn btn-primary")}}
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
 <!-- Modal for adding member -->
-<div class="modal fade" id="AddingMember" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  	<div class="modal-dialog" role="document">
-    	<div class="modal-content">
-      		<div class="modal-header">
-        		<h5 class="modal-title" id="exampleModalLabel">Add new members</h5>
-        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          		<span aria-hidden="true">&times;</span>
-        		</button>
-      		</div>
-      	<div class="modal-body">
-        	<form action="" method="POST">
-				{{ form_add_member.hidden_tag() }}
-				<div>
-					{{ form_add_member.teamMembers.label }}
-					{{ form_add_member.teamMembers }}
-					{% if form_add_member.errors %}
-					{% for error in form_add_member.teamMembers.errors %}
+<div class="modal fade" id="AddingMember" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Add new members</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form action="" method="POST">
+					{{ form_add_member.hidden_tag() }}
+					<div>
+						{{ form_add_member.teamMembers.label }}
+						{{ form_add_member.teamMembers }}
+						{% if form_add_member.errors %}
+						{% for error in form_add_member.teamMembers.errors %}
 						<span>{{error}}</span>
-					{% endfor %}
-				{% endif %}
-				</div>
-			    <div class="modal-footer">
-			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			        {{form_add_member.submit_member(class="btn btn-primary")}}  
-			    </div>
-	    	</form> 
-	    </div>
-    	</div>
+						{% endfor %}
+						{% endif %}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						{{form_add_member.submit_member(class="btn btn-primary")}}
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
+<div class="modal fade" id="EditingTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Add new members</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+
+				<form method="POST">
+					<div>
+						<input name='editId' id="editId">
+					</div>
+					<div>
+						<input name='editName' id="editName">
+					</div>
+					<div>
+						<input name='editDescription' id="editDescription">
+					</div>
+					<div>
+						<input type="submit" value="submit">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <script type="text/javascript" src="{{url_for('static',filename='js/myteam/myteam.js')}}"></script>
 {% endblock content%}

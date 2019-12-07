@@ -49,7 +49,7 @@
 }
 
 .task-card {
-  height: 120px;
+  height: 100%;
   border-radius: 3px;
   border-bottom: 1px solid black;
 
@@ -86,7 +86,7 @@
   display: inline-block;
 }
 
-.member-menu {
+.member-context-menu {
   display: none;
   color: yellow;
 }
