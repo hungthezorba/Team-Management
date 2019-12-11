@@ -1,13 +1,58 @@
 /* myteam.html CSS */
-.avatar-icon {
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: inline-block;
-  margin-right: 15px;
+
+/* Input Text CSS */
+
+.Input-text {
+  display: block;
+  margin: 0;
+  padding-left: 7px;
+  color: inherit;
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--inputFontSize);
+  font-weight: inherit;
+  line-height: var(--inputLineHeight);
+  border: 1px solid #7E57C2;
+  border-radius: 0.4rem;
+  transition: box-shadow var(--transitionDuration);
+}
+
+.Input-text::placeholder {
+  color: #B0BEC5;
+}
+
+.Input-text:focus {
+  outline: none;
+  box-shadow: 0.2rem 0.8rem 1.6rem var(--colorPrimary600);
+}
+
+
+/* Edit Team CSS */
+
+#editTeamName{
+  border-radius: 5px;
+}
+
+#toggleEdit{
 
 }
 
+#cancelEdit{
+  display: none;
+}
+/* Avatar CSS */
+.avatar-icon {
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  margin-right: 10px;
+  border: 3px solid gray;
+
+}
+.avatar-icon:hover {
+  border: 2px solid orange;
+}
 .add-icon {
   position: relative;
   border-radius: 50%;
@@ -21,11 +66,7 @@
   background-color: #625e5e54;
 }
 
-.avatar-icon a img {
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-}
+
 
 .running-bar {
   border-radius: 25px;
@@ -88,6 +129,69 @@
 
 .member-context-menu {
   display: none;
-  color: yellow;
+  position: absolute;
+  background-color: #272343;
+  transition: 1s;
 }
+
+.member-context-menu .dropdown-item {
+  color: white;
+}
+
+
+
+.member-context-menu .dropdown-item:hover {
+  border-left: 15px solid #fe346e;
+  background-color: #272343;
+
+}
+
+
+
+
+/* Dropdown Animation */
+@media (min-width: 992px) {
+  .animate {
+    animation-duration: 0.3s;
+    -webkit-animation-duration: 0.3s;
+    animation-fill-mode: both;
+    -webkit-animation-fill-mode: both;
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  100% {
+    transform:translateY(0rem);
+    opacity: 1;
+  }
+  0% {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes slideIn {
+  0% {
+    -webkit-transform: transform;
+    -webkit-opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    -webkit-opacity: 1;
+  }
+  0% {
+    -webkit-transform: translateY(1rem);
+    -webkit-opacity: 0;
+  }
+}
+
+.slideIn {
+  -webkit-animation-name: slideIn;
+  animation-name: slideIn;
+}
+
 

@@ -6,15 +6,31 @@
 		<div class="container">
 			<section class="section-custom" id="team-name">
 				<div>
-					<h2 onclick="clicking">{{ team.name }}</h2>
-					<form style="display: inline-block;" method="POST"
-						action="{{url_for('delete_team',team_id=team.id)}}">
-						<input type="submit" value="Delete" class="btn btn-danger">
-					</form>
-					<form style="display: inline-block" method="POST"
-						action="{{url_for('leave_team',team_id=team.id)}}">
-						<input type="submit" value="Leave" class="btn btn-danger">
-					</form>
+					<div style="display: inline-block;">
+						<h2 id="teamName">{{ team.name }}</h2>
+						<form>
+							<h2><input class="Input-text" style="display: none;" id="editTeamName"  name="teamName"></h2>
+						</form>
+					</div>
+					<div style="display: inline-block;">
+						<i id="toggleEdit" onclick="showInput()" style="margin-left: 10px; font-size:25px; display: inline-block;" class="fa fa-edit"></i>
+					</div>
+					<div style="display: inline-block;">
+						<i id="cancelEdit" onclick="hideInput()" style="margin-left: 10px; font-size:25px;" class="fa fa-times" aria-hidden="false"></i>
+					</div>
+					<div>
+						<p>{{team.description}}</p>
+					</div>
+					<div>
+						<form style="display: inline-block;" method="POST"
+							action="{{url_for('delete_team',team_id=team.id)}}">
+							<input type="submit" value="Delete" class="btn btn-danger">
+						</form>
+						<form style="display: inline-block" method="POST"
+							action="{{url_for('leave_team',team_id=team.id)}}">
+							<input type="submit" value="Leave" class="btn btn-danger">
+						</form>
+					</div>
 				</div>
 			</section>
 			<section class="section-custom" id="members">
@@ -26,11 +42,11 @@
 					</h2>
 					<div>
 						{% for member in team.members %}
-						<div class="avatar-icon toggle-context-menu">
-							<a class="" href="{{url_for('other_profile',user_id=member.id)}}"><img
+						<div style="display: inline-block;" class=" toggle-context-menu">
+							<a class="" href="{{url_for('other_profile',user_id=member.id)}}"><img class="avatar-icon"
 									src="{{url_for('static', filename='profile_pics/' + member.profile_image)}}" /></a>
 							{% if member != team.teamLeader%}
-							<div class="member-context-menu">
+							<div class="member-context-menu animate slideIn">
 								<a class="dropdown-item"
 									href="{{url_for('remove_member',team_id=team.id, member_id=member.id)}}">Remove
 									Member</a>
@@ -81,15 +97,13 @@
 								<div class="task-card-body">
 									<h4 id="name{{task_data[i]['id']}}">{{ task_data[i]["name"] }}</h4>
 									<p id="description{{task_data[i]['id']}}">{{ task_data[i]["description"] }}</p>
-									<a href="{{url_for('completeTask',team_id=team.id,task_id=task_data[i]['id'])}}"
-										class="btn btn-primary">Mark as complete</a>
-									<a data-toggle="modal" data-target="#EditingTask" id="{{task_data[i]['id']}}"
-										class="edit-task btn btn-primary">Edit</a>
+									<a href="#" data-toggle="modal" data-target="#CompleteTask" id="{{task_data[i]['id']}}" class="complete-task btn btn-primary">Mark as complete</a>
+									<a href="#" data-toggle="modal" data-target="#EditingTask" id="{{task_data[i]['id']}}" class="edit-task btn btn-info">Edit</a>
+									<a href="{{url_for('deleteTask',team_id=team.id,task_id=task_data[i]['id'])}}" class="btn btn-danger">Delete</a>
 
-									<a href="{{url_for('deleteTask',team_id=team.id,task_id=task_data[i]['id'])}}"
-										class="btn btn-danger">Delete</a>
-
-									<p>{% if task_data[i]["date_created_day"] >= 1 %}
+									<p>{% if task_data[i]["date_created_day"] == 1 %}
+										Created {{task_data[i]["date_created_day"]}} day ago
+										{% elif task_data[i]["date_created_day"] > 1 %}
 										Created {{task_data[i]["date_created_day"]}} days ago
 										{% else %}
 										{% if task_data[i]["date_created_hour"] >= 1  %}
@@ -119,7 +133,12 @@
 									<h3>{{ task_data[i]["name"] }}</h3>
 									<div style="display: inline-block;">
 										<p>
-											{% if task_data[i]["date_completed_day"] >= 1 %}
+											{% if task_data[i]["date_completed_day"] == 1 %}
+											Completed {{task_data[i]["date_completed_day"]}} day ago by
+											{% for member_complete in task_data[i]['complete_by'] %}
+											{{member_complete}}
+											{%endfor%}
+											{% elif task_data[i]["date_completed_day"] > 1%}
 											Completed {{task_data[i]["date_completed_day"]}} days ago by
 											{% for member_complete in task_data[i]['complete_by'] %}
 											{{member_complete}}
@@ -147,9 +166,9 @@
 											{% endif %}
 										</p>
 									</div>
-									<div class="avatar-icon">
+									<div class="" style="display: inline;">
 										{% for image in task_data[i]['user_image'] %}
-										<a><img src="{{url_for('static', filename='profile_pics/' + image)}}" /></a>
+										<a><img class="avatar-icon" src="{{url_for('static', filename='profile_pics/' + image)}}" /></a>
 										{% endfor %}
 									</div>
 								</div>
@@ -242,12 +261,13 @@
 		</div>
 	</div>
 </div>
+<!-- Modal for editing task -->
 <div class="modal fade" id="EditingTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 	aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Add new members</h5>
+				<h5 class="modal-title" id="exampleModalLabel">Edit Task</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -255,7 +275,7 @@
 			<div class="modal-body">
 
 				<form method="POST">
-					<div>
+					<div style="display: none;">
 						<input name='editId' id="editId">
 					</div>
 					<div>
@@ -264,6 +284,35 @@
 					<div>
 						<input name='editDescription' id="editDescription">
 					</div>
+					<div>
+						<input type="submit" value="submit">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal for complete task -->
+<div class="modal fade" id="CompleteTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Accomplish</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+
+				<form method="POST">
+					<div>
+						<input name='completeId' id="completeId">
+					</div>
+					{% for member in team.members %}
+						<input name="membersComplete" type="checkbox" value="{{member.username}}">
+							<a><img class="avatar-icon" src="{{url_for('static', filename='profile_pics/' + member.profile_image)}}"/></a>
+					{% endfor %}
 					<div>
 						<input type="submit" value="submit">
 					</div>

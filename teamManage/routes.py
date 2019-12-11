@@ -1,7 +1,7 @@
 import os
 import secrets
-from flask import render_template, url_for, redirect, flash, request
-from teamManage import app, db, bcrypt
+from flask import render_template, url_for, redirect, flash, request, abort
+from teamManage import app, db, bcrypt, socketio
 from PIL import Image
 from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm, EditTaskForm
 from teamManage.models import User, Team, Task
@@ -135,6 +135,12 @@ def team():
 @app.route("/team/<int:team_id>", methods=["GET","POST","PUT"])
 def myTeam(team_id):
 	team = Team.query.get_or_404(team_id)
+	members_id = []
+	for member in team.members.all():
+		members_id.append(member.id)
+	if current_user.id not in members:
+		return(abort(403))
+
 	form_add_member = AddMemberForm()
 	form_add_task = TaskForm()
 	form_edit_task = EditTaskForm()
@@ -190,9 +196,9 @@ def myTeam(team_id):
 		for task in tasks:
 			if task.completeBy:
 				for user in task.completeBy.all():
-					if user == member.username: #Need to work on after changing the database
+					if user.username == member.username: #Need to work on after changing the database
 						taskDone += 1
-		member_data[i]['taskDone'] = taskDone
+		member_data[i]['taskDone'] = taskDone #Definitely need to check 
 		i += 1
 
 	#Separate 2 form validation
@@ -200,7 +206,7 @@ def myTeam(team_id):
 		member_in_team = []
 		membersAdd = form_add_member.teamMembers.data.split(', ')
 
-		for member in team.members.all(): #find the member in team
+		for member in team.members.all(): #find all the member of the team
 			member_in_team.append(member.username)
 
 		for member in membersAdd: 
@@ -228,7 +234,15 @@ def myTeam(team_id):
 			task.name = request.form.get('editName')
 			task.description = request.form.get('editDescription')
 			db.session.commit()
-		return redirect(url_for('myTeam',team_id=team.id))
+		if request.form.get('completeId'):
+			task = Task.query.get(request.form.get('completeId'))
+			task.status = True
+			task.date_completed = datetime.utcnow()
+			membersComplete = request.form.getlist('membersComplete')
+			for member in membersComplete:
+				user = User.query.filter_by(username=member).first()
+				task.completeBy.append(user)
+				db.session.commit()
 			
 
 	
@@ -324,3 +338,16 @@ def remove_member(team_id,member_id):
 	else:
 		flash('You are not the team leader','danger')
 	return redirect(url_for("myTeam",team_id=team.id))
+
+
+@app.route('/chat')
+def sessions():
+    return render_template('chat.html')
+ 
+def messageReceived(methods=['GET', 'POST']):
+    print('message was received!!!')
+ 
+@socketio.on('my event')
+def handle_my_custom_event(json, methods=['GET', 'POST']):
+    print('received my event: ' + str(json))
+    socketio.emit('my response', json, callback=messageReceived)

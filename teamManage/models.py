@@ -54,9 +54,8 @@ class Task(db.Model):
 	team_id = db.Column(db.Integer, db.ForeignKey("team.id"), nullable=False)
 	date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 	date_completed = db.Column(db.DateTime, nullable=True)
-	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 	def __repr__(self):
-		return (f" ({self.name}, {self.description}, {self.status}, {self.team_id}), {self.user_id}")
+		return (f" ({self.name}, {self.description}, {self.status}, {self.team_id})")
 
 #class Post(db.Model)
