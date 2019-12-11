@@ -10,13 +10,35 @@ for (let i = 0; i < contributionBar.length; i++) {
 	contributionBar[i].style.backgroundColor = randomRGB;
 }
 
+//Toggle Edit Team
+editTeamName = document.getElementById('editTeamName')
+teamName = document.getElementById('teamName')
+toggleEdit = document.getElementById('toggleEdit')
+cancelEdit = document.getElementById('cancelEdit')
 
-//Drop down on context
+function showInput(){
+	var teamNameWidth = teamName.offsetWidth
+	editTeamName.style.width = teamNameWidth+ 25 +'px'
+	editTeamName.style.display = 'block'
+	editTeamName.value = teamName.innerHTML
+	teamName.style.display = 'none'
+	// On/Off Edit-Cancel Button
+	toggleEdit.style.display = 'none'
+	cancelEdit.style.display = 'block'
+}
+
+function hideInput(){
+	editTeamName.style.display = 'none'
+	teamName.style.display = 'block'
+	toggleEdit.style.display = 'block'
+	cancelEdit.style.display = 'none'
+
+}
+
+//Modify context-menu when right-click
 window.addEventListener('click', function() {
 	hideContextMenu()
 })
-
-
 
 var toggleContextMenu = document.querySelectorAll('.toggle-context-menu')
 Array.prototype.forEach.call(toggleContextMenu, function(tog) {
@@ -24,9 +46,11 @@ Array.prototype.forEach.call(toggleContextMenu, function(tog) {
 })
 
 function showContextMenu(e) {
+	hideContextMenu()
 	children = this.children[1]
 	children.style.display = 'block'
 	e.preventDefault()
+	console.log(this)
 	
 }
 
@@ -35,6 +59,7 @@ function hideContextMenu() {
 	memberContextMenu.forEach(context => context.style.display = 'none' )
 }
 
+//Append Task Id To Form Modal
 
 editTasks = document.querySelectorAll('.edit-task')
 editId = document.getElementById('editId')
@@ -48,4 +73,12 @@ function appendTaskId(e) {
 	editName.value = taskName.innerHTML
 	editDescription.value = taskDescription.innerHTML
 	editId.value = this.id
+}
+
+completeTasks = document.querySelectorAll('.complete-task')
+completeId = document.getElementById('completeId')
+console.log(completeId)
+completeTasks.forEach(Task => Task.addEventListener('click', appendCompleteTaskId)) 
+function appendCompleteTaskId(e) {
+	completeId.value = this.id
 }
