@@ -7,6 +7,7 @@ from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, T
 from teamManage.models import User, Team, Task
 from flask_login import login_user, current_user, login_required, logout_user
 from datetime import datetime, timedelta
+from flask_socketio import send, emit, join_room, leave_room
 import json
 
 @app.route("/")
@@ -138,7 +139,7 @@ def myTeam(team_id):
 	members_id = []
 	for member in team.members.all():
 		members_id.append(member.id)
-	if current_user.id not in members:
+	if current_user.id not in members_id:
 		return(abort(403))
 
 	form_add_member = AddMemberForm()
@@ -339,15 +340,33 @@ def remove_member(team_id,member_id):
 		flash('You are not the team leader','danger')
 	return redirect(url_for("myTeam",team_id=team.id))
 
+users = []
 
-@app.route('/chat')
+@app.route('/chat', methods=["GET", "POST"])
+@login_required
 def sessions():
     return render_template('chat.html')
- 
+
 def messageReceived(methods=['GET', 'POST']):
-    print('message was received!!!')
- 
-@socketio.on('my event')
-def handle_my_custom_event(json, methods=['GET', 'POST']):
-    print('received my event: ' + str(json))
-    socketio.emit('my response', json, callback=messageReceived)
+	print('message was received!!!')
+
+@socketio.on('join', namespace='/chat')
+def join(room):
+    join_room(int(room))
+    print("Room number:", room)
+    print(current_user.username + ' has entered the room. ', room)
+    send(current_user.username + ' has joined', room=room)
+
+@socketio.on('my event', namespace='/chat')
+def handle_custom_event(json, methods=['GET','POST']):
+	team_id = request.args.get('team_id')
+	while team_id == None:
+		team_id = request.args.get('team_id')
+	print("message received:" + str(json))
+	emit('my response', json, callback=messageReceived(), room=int(team_id))
+
+
+
+
+
+

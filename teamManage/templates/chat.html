@@ -1,38 +1,106 @@
 {% extends "layout.html" %}
 {% block content %}
     <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
-    <div id="message_holder"></div>
- 
+    <!--1<div class="message_holder"></div>
+
     <form action="" method="POST">
-      <input type="text" class="username" placeholder="User Name"/>
-      <input type="text" class="message" placeholder="Messages"/>
-      <input type="submit"/>
-    </form>
- 
+      <input style="height: 40px" type="text" class="mt-4 message" placeholder="Messages"/>
+      <button type="submit" class="btn btn-primary">Send</button>
+    </form> !-->
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<form action="" method="POST">
+			<div class="col-md-12 col-md-6">
+				<div class="panel">
+					<!--Heading-->
+					<div class="panel-heading">
+						<div class="panel-control">
+							<div class="btn-group">
+								<button class="btn btn-default" type="button" data-toggle="collapse"
+									data-target="#demo-chat-body"><i class="fa fa-chevron-down"></i></button>
+							</div>
+						</div>
+						<h3 class="panel-title">Chat</h3>
+					</div>
+
+					<!--Widget body-->
+					<div id="demo-chat-body" class="panel-collapse collapse show">
+						<div class="nano has-scrollbar" style="height: 700px">
+							<div class="nano-content pad-all" tabindex="0" style="right: -17px;">
+								<ul class="list-unstyled media-block" id="text_holder">
+								</ul>
+							</div>
+							<div class="nano-pane">
+								<div class="nano-slider" style="height: 141px; transform: translate(0px, 0px);"></div>
+							</div>
+						</div>
+
+						<!--Widget footer-->
+						<div class="panel-footer">
+							<div class="row">
+								<div class="col-md-9">
+									<input type="text" placeholder="Enter your text" class="form-control message"
+										id="send">
+								</div>
+								<div class="col-md-3">
+									<button class="btn btn-primary btn-block" type="submit">Send the message</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script type="text/javascript">
-      var socket = io.connect('http://' + document.domain + ':' + location.port);
-      socket.on( 'connect', function() {
-        socket.emit( 'my event', {
-          data: 'User Connected'
-        } )
-        var form = $( 'form' ).on( 'submit', function( e ) {
-          e.preventDefault()
-          let user_name = $( 'input.username' ).val()
-          let user_input = $( 'input.message' ).val()
-          socket.emit( 'my event', {
-            user_name : user_name,
-            message : user_input
-          } )
-          $( 'input.message' ).val( '' ).focus()
-        } )
-      } )
+        function getValueAtIndex(index) {
+            var str = window.location.href; //window.location.href;
+            return str.split("/")[index];
+        }
+      var roomName = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+        console.log(roomName)
+        var roomName = roomName.split('?')
+        console.log(roomName)
+        var roomName = roomName[1].split('=')
+        console.log(roomName[1])
+      var socket = io.connect('http://' + document.domain + ':' + location.port + '/chat', {query: {'team_id': roomName[1]}});
+      console.log(socket)
+        let room_name = roomName[1]
+
+
+         socket.on( 'connect', function() {
+             socket.emit('my event', {
+                 data: 'User Connected'
+             })
+             socket.emit('join', room_name);
+
+
+             $('h3').remove()
+             $('#text_holder').append('<div><b> {{ current_user.username }} has connected</b></div>')
+             var form = $('form').on('submit', function (e) {
+                 e.preventDefault()
+                 let user_name = "{{ current_user.username }}"
+                 let user_input = $('input.message').val()
+                 let user_profile = '<img id="chat-img" src="{{url_for("static", filename="profile_pics/" + current_user.profile_image )}}" class="rounded-circle img-sm" alt="Profile Picture"/>'
+
+                 socket.emit('my event', {
+                     user_name: user_name,
+                     message: user_input,
+                     chat_image: user_profile
+                 })
+                 $('input.message').val('').focus()
+             })
+         })
       socket.on( 'my response', function( msg ) {
         console.log( msg )
-        if( typeof msg.user_name !== 'undefined' ) {
-          $( 'h3' ).remove()
-          $( '#message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+'</b> '+msg.message+'</div>' )
+        if( typeof msg.user_name !== 'undefined' && msg.message !== '' ) {
+          $( '#text_holder' ).append('<li class="mar-btm" >' + '<div class="media-left">' + msg.chat_image + '</div>' +'<div class="media-body pad-hor"><div class="speech">'+ '<b>'+msg.user_name+'</b> ' + msg.message +'</div></div>'+'</li>')
         }
       })
+
+
+
     </script>
+
 {% endblock %}
