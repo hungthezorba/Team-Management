@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for post in posts %}
+        <article class="media content-section">
+          <img class="rounded-circle article-img" src="{{ profile_image }}">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ post.author.username }}</a>
+              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <a href="{{url_for('post',team_id=team.id,post_id=post.id)}}"><h2>{{ post.title }}</h2></a>
+            <p class="article-content">{{ post.content }}</p>
+          </div>
+        </article>  
+      {% endfor %}
+      <!--adding button-->
+      <div class="wrap-custom">
+        <section id="team-header">
+          <div>
+            <form style="display: inline-block;" method="POST"
+            action="{{url_for('discussion',team_id=team.id)}}">
+            <input type="submit" value="Add new post" class="btn btn-danger">
+            </form>
+          </div>
+        </section>
+      </div>
+{% endblock content %}
