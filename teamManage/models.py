@@ -27,7 +27,7 @@ class User(db.Model, UserMixin):
 	profile_image = db.Column(db.String(20),nullable=False, default="default.jpg")
 	password = db.Column(db.String(60), nullable=False)
 	gender = db.Column(db.String(8), nullable=False)
-	member = db.relationship("Team", cascade="all", secondary=UserTeam,backref=db.backref("members",lazy="dynamic")) #Many-to-Many Relationship
+	member = db.relationship("Team", cascade="all", secondary=UserTeam,backref=db.backref("members",lazy="dynamic")) #Many-to-Many Relationshipc5
 	phoneNumber = db.Column(db.String, unique=True, nullable=True)
 	biography = db.Column(db.String, unique=False, nullable=True)
 	leaders = db.relationship("Team", backref="teamLeader", lazy=True) #One-to-Many Relationship
