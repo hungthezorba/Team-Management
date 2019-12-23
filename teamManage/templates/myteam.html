@@ -30,6 +30,10 @@
 							action="{{url_for('leave_team',team_id=team.id)}}">
 							<input type="submit" value="Leave" class="btn btn-danger">
 						</form>
+                        <form style="display: inline-block;" method="POST"
+							action="{{url_for('sessions', team_id=team.id)}}">
+							<input type="submit" value="Chat" class="btn btn-primary">
+						</form>
 					</div>
 				</div>
 			</section>
