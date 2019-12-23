@@ -149,7 +149,7 @@ def myTeam(team_id):
 	tasks = team.tasks
 	members = team.members
 	time = datetime.utcnow()
-	progress = 0 
+	progress = 0
 	member_data = []
 	task_data = []
 	totalTaskComplete = 0
@@ -158,7 +158,7 @@ def myTeam(team_id):
 	for task in tasks:
 		task_data.append({})
 		create_in = datetime.utcnow() - task.date_created
-	
+
 		if task.status == True:
 			complete_in = datetime.utcnow() - task.date_completed
 			totalTaskComplete += 1
@@ -188,7 +188,7 @@ def myTeam(team_id):
 		progress = 100
 	else:
 		progress = round(progress / len(tasks) * 100)
-	
+
 	i = 0 #index in member_data
 	#Member Contribution
 	for member in members:
@@ -200,18 +200,18 @@ def myTeam(team_id):
 				for user in task.completeBy.all():
 					if user.username == member.username: #Need to work on after changing the database
 						taskDone += 1
-		member_data[i]['taskDone'] = taskDone #Definitely need to check 
+		member_data[i]['taskDone'] = taskDone #Definitely need to check
 		i += 1
 
 	#Separate 2 form validation
-	if form_add_member.submit_member.data and form_add_member.validate(): 
+	if form_add_member.submit_member.data and form_add_member.validate():
 		member_in_team = []
 		membersAdd = form_add_member.teamMembers.data.split(', ')
 
 		for member in team.members.all(): #find all the member of the team
 			member_in_team.append(member.username)
 
-		for member in membersAdd: 
+		for member in membersAdd:
 			if not (member in member_in_team): # a condition to check if member is already in the team or not
 				user = User.query.filter_by(username=member).first() # those line will ensure that the DB wont have any duplicated rows
 				team.members.append(user)
@@ -245,22 +245,22 @@ def myTeam(team_id):
 				user = User.query.filter_by(username=member).first()
 				task.completeBy.append(user)
 				db.session.commit()
-			
 
-	
+
+
 
 	return render_template(
-		"myteam.html", 
-		title=team.name, 
-		team=team, 
-		form_add_member=form_add_member, 
+		"myteam.html",
+		title=team.name,
+		team=team,
+		form_add_member=form_add_member,
 		form_add_task=form_add_task,
 		form_edit_task=form_edit_task,
 		progress=progress,
 		member_data=member_data,
 		totalTaskComplete=totalTaskComplete,
 		task_data=task_data
-		)	
+		)
 
 # -----------------------------TASK ROUTE -----------------------------
 
@@ -349,13 +349,34 @@ def sessions():
     return render_template('chat.html')
 
 def messageReceived(methods=['GET', 'POST']):
-<<<<<<< HEAD
+ <<<<<<< HEAD
     print('message was received!!!')
- 
+
 @socketio.on('my event')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print('received my event: ' + str(json))
     socketio.emit('my response', json, callback=messageReceived)
+
+
+ =======
+	print('message was received!!!')
+
+@socketio.on('join', namespace='/chat')
+def join(room):
+    join_room(int(room))
+    print("Room number:", room)
+    print(current_user.username + ' has entered the room. ', room)
+    send(current_user.username + ' has joined', room=room)
+
+@socketio.on('my event', namespace='/chat')
+def handle_custom_event(json, methods=['GET','POST']):
+	team_id = request.args.get('team_id')
+	while team_id == None:
+		team_id = request.args.get('team_id')
+	print("message received:" + str(json))
+	emit('my response', json, callback=messageReceived(), room=int(team_id))
+
+ >>>>>>> 2d80de8e391e3e691c852d40011715ac3c357b74
 
 @app.route('/team/<int:team_id>/discussion/new', methods=['GET','POST'])
 @login_required
@@ -473,27 +494,3 @@ def update_comment(post_id,team_id,comment_id):
 		form.content.data = comment.content
 	return render_template('new_comment.html', title='Update comment',
 						   form=form, legend='Update comment')
-=======
-	print('message was received!!!')
-
-@socketio.on('join', namespace='/chat')
-def join(room):
-    join_room(int(room))
-    print("Room number:", room)
-    print(current_user.username + ' has entered the room. ', room)
-    send(current_user.username + ' has joined', room=room)
-
-@socketio.on('my event', namespace='/chat')
-def handle_custom_event(json, methods=['GET','POST']):
-	team_id = request.args.get('team_id')
-	while team_id == None:
-		team_id = request.args.get('team_id')
-	print("message received:" + str(json))
-	emit('my response', json, callback=messageReceived(), room=int(team_id))
-
-
-
-
-
-
->>>>>>> 2d80de8e391e3e691c852d40011715ac3c357b74
