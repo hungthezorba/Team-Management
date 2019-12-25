@@ -3,8 +3,9 @@ import secrets
 from flask import render_template, url_for, redirect, flash, request, abort
 from teamManage import app, db, bcrypt, socketio
 from PIL import Image
-from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm, EditTaskForm
-from teamManage.models import User, Team, Task
+from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm, \
+EditTaskForm, PostForm,CommentForm
+from teamManage.models import User, Team, Task,Post,Comment
 from flask_login import login_user, current_user, login_required, logout_user
 from datetime import datetime, timedelta
 from flask_socketio import send, emit, join_room, leave_room
@@ -382,6 +383,17 @@ def sessions():
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
 
+@socketio.on('my event')
+def handle_my_custom_event(json, methods=['GET', 'POST']):
+    print('received my event: ' + str(json))
+    socketio.emit('my response', json, callback=messageReceived)
+    print('message was received!!!')
+    print('message was received!!!')
+
+
+
+
+
 
 @socketio.on('join', namespace='/chat')
 def join(room):
@@ -389,6 +401,133 @@ def join(room):
     print("Room number:", room)
     print(current_user.username + ' has entered the room. ', room)
     send(current_user.username + ' has joined', room=room)
+
+
+@socketio.on('my event', namespace='/chat')
+def handle_custom_event(json, methods=['GET','POST']):
+	team_id = request.args.get('team_id')
+	while team_id == None:
+		team_id = request.args.get('team_id')
+	print("message received:" + str(json))
+	emit('my response', json, callback=messageReceived(), room=int(team_id))
+
+
+@app.route('/team/<int:team_id>/discussion/new', methods=['GET','POST'])
+@login_required
+def discussion(team_id):
+	team = Team.query.get_or_404(team_id)
+	form = PostForm()
+	if form.validate_on_submit():
+		post = Post(title=form.title.data, content=form.content.data, author=current_user,location = team)
+		db.session.add(post)
+		db.session.commit()
+		flash('Your post has been created!', 'success')
+		return redirect(url_for('discussion_list',team_id=team.id))
+	return render_template('discussion.html', title='New Post',
+						   form=form, legend='New Post')
+
+@app.route('/team/<int:team_id>/discussion', methods=['GET','POST'])
+@login_required
+def discussion_list(team_id):
+	team = Team.query.get_or_404(team_id)
+	posts = Post.query.filter_by(location=team)
+	return render_template('discussion_list.html', posts=posts,team=team)
+
+@app.route('/team/<int:team_id>/discussion/<int:post_id>', methods=['GET','POST'])
+@login_required
+def post(team_id,post_id):
+	team = Team.query.get_or_404(team_id)
+	post = Post.query.get_or_404(post_id)
+	comments = Comment.query.filter_by(article=post)
+	return render_template('post.html', title=post.title, post=post,team=team,comments=comments)
+
+@app.route('/team/<int:team_id>/discussion/<int:post_id>/delete', methods=['GET','POST'])
+@login_required
+def delete_post(team_id,post_id):
+	with db.session.no_autoflush:
+		team = Team.query.get_or_404(team_id)
+		post = Post.query.get_or_404(post_id)
+		if post.author != current_user:
+			flash('You can not delete this post !', 'danger')
+			return redirect(url_for('discussion_list', team_id=team.id))
+
+		db.session.delete(post)
+		for comment in post.comment:
+			db.session.delete(comment)
+		db.session.commit()
+		flash('Your post has been deleted!', 'success')
+		return redirect(url_for('discussion_list', team_id=team.id))
+
+
+@app.route('/team/<int:team_id>/discussion/<int:post_id>/update', methods=['GET','POST'])
+@login_required
+def update_post(post_id,team_id):
+	team = Team.query.get_or_404(team_id)
+	post = Post.query.get_or_404(post_id)
+	if post.author != current_user:
+		flash('You can not update this post !', 'danger')
+		return redirect(url_for('discussion_list', team_id=team.id))
+	form = PostForm()
+	if form.validate_on_submit():
+		post.title = form.title.data
+		post.content = form.content.data
+		db.session.commit()
+		flash('Your post has been updated!', 'success')
+		return redirect(url_for('discussion_list',team_id=team.id))
+	elif request.method == 'GET':
+		form.title.data = post.title
+		form.content.data = post.content
+	return render_template('discussion.html', title='Update Post',
+						   form=form, legend='Update Post')
+
+@app.route('/team/<int:team_id>/discussion/<int:post_id>/addcomment', methods=['GET','POST'])
+@login_required
+def add_comment(post_id,team_id):
+	team = Team.query.get_or_404(team_id)
+	post = Post.query.get_or_404(post_id)
+	form = CommentForm()
+	if form.validate_on_submit():
+		comment = Comment(content=form.content.data,article = post, user = current_user)
+		db.session.add(comment)
+		db.session.commit()
+		flash('Your comment has been created!', 'success')
+		return redirect(url_for('post', team_id=team.id,post_id=post.id))
+	return render_template('new_comment.html',form=form, legend='Add comment')
+
+@app.route('/team/<int:team_id>/discussion/<int:post_id>/comment/<int:comment_id>/delete', methods=['GET','POST'])
+@login_required
+def delete_comment(post_id,team_id,comment_id):
+	team = Team.query.get_or_404(team_id)
+	post = Post.query.get_or_404(post_id)
+	comment = Comment.query.get_or_404(comment_id)
+	if post.author == current_user or comment.user == current_user:
+		db.session.delete(comment)
+		db.session.commit()
+	else:
+		flash('You can not delete this comment !', 'danger')
+		return redirect(url_for('post', team_id=team.id,post_id=post.id))
+
+	return redirect(url_for('post', team_id=team.id,post_id=post.id))
+
+@app.route('/team/<int:team_id>/discussion/<int:post_id>/comment/<int:comment_id>/update', methods=['GET','POST'])
+@login_required
+def update_comment(post_id,team_id,comment_id):
+	comment = Comment.query.get_or_404(comment_id)
+	team = Team.query.get_or_404(team_id)
+	post = Post.query.get_or_404(post_id)
+	if post.author != current_user:
+		flash('You can not update this comment !', 'danger')
+		return redirect(url_for('post', team_id=team.id,post_id=post.id))
+	form = CommentForm()
+	if form.validate_on_submit():
+		comment.content = form.content.data
+		db.session.commit()
+		flash('Your comment has been updated!', 'success')
+		return redirect(url_for('post',team_id=team.id,post_id=post.id))
+	elif request.method == 'GET':
+		form.content.data = comment.content
+	return render_template('new_comment.html', title='Update comment',
+						   form=form, legend='Update comment')
 
 
 @socketio.on('my event', namespace='/chat')

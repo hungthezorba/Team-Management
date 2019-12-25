@@ -53,6 +53,15 @@ class TeamForm(FlaskForm):
 					pass
 				else:
 					raise ValidationError("%s is not a Team Manager's member" %(member))
+
+class PostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Post')
+
+class CommentForm(FlaskForm):
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Post')
 		
 class AddMemberForm(FlaskForm):
 	teamMembers = StringField("Members",validators=[DataRequired()])
