@@ -36,6 +36,10 @@
 							action="{{url_for('sessions', team_id=team.id)}}">
 							<input type="submit" value="Chat" class="btn btn-primary">
 						</form>
+						<form style="display: inline-block;" method="POST"
+							action="{{url_for('discussion_list', team_id=team.id)}}">
+							<input type="submit" value="discussion" class="btn btn-primary">
+						</form>
 					</div>
 				</div>
 			</section>
