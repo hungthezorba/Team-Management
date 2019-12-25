@@ -148,133 +148,6 @@ def team():
 
 @app.route("/team/<int:team_id>", methods=["GET", "POST", "PUT"])
 def myTeam(team_id):
-<<<<<<< HEAD
-	team = Team.query.get_or_404(team_id)
-	members_id = []
-	for member in team.members.all():
-		members_id.append(member.id)
-	if current_user.id not in members_id:
-		return(abort(403))
-
-	form_add_member = AddMemberForm()
-	form_add_task = TaskForm()
-	form_edit_task = EditTaskForm()
-	tasks = team.tasks
-	members = team.members
-	time = datetime.utcnow()
-	progress = 0
-	member_data = []
-	task_data = []
-	totalTaskComplete = 0
-	#Task Processing
-	i = 0
-	for task in tasks:
-		task_data.append({})
-		create_in = datetime.utcnow() - task.date_created
-
-		if task.status == True:
-			complete_in = datetime.utcnow() - task.date_completed
-			totalTaskComplete += 1
-			progress += 1
-			task_data[i]["date_completed_day"] = int(round(divmod(complete_in.days * 86400 + complete_in.seconds, 60)[0] / 1440))
-			task_data[i]["date_completed_hour"] = int(round(divmod(complete_in.days * 86400 + complete_in.seconds, 60)[0] / 60))
-			task_data[i]["date_completed_minute"] = divmod(complete_in.days * 86400 + complete_in.seconds, 60)[0]
-			task_data[i]["date_completed_second"] = divmod(complete_in.days * 86400 + complete_in.seconds, 60)[1]
-			task_data[i]["complete_by"] = []
-			task_data[i]["user_image"] = []
-			for user in task.completeBy.all():
-				task_data[i]["complete_by"].append(user.username)
-				task_data[i]["user_image"].append(user.profile_image)
-
-
-		task_data[i]["id"] = task.id
-		task_data[i]["name"] = task.name
-		task_data[i]["status"] = task.status
-		task_data[i]["description"] = task.description
-		task_data[i]["date_created_day"] = int(round(divmod(create_in.days * 86400 + create_in.seconds, 60)[0] / 1440))
-		task_data[i]["date_created_hour"] = int(round(divmod(create_in.days * 86400 + create_in.seconds, 60)[0] / 60))
-		task_data[i]["date_created_minute"] = divmod(create_in.days * 86400 + create_in.seconds, 60)[0]
-		task_data[i]["date_created_second"] = divmod(create_in.days * 86400 + create_in.seconds, 60)[1]
-
-		i += 1
-	if len(tasks) == 0:
-		progress = 100
-	else:
-		progress = round(progress / len(tasks) * 100)
-
-	i = 0 #index in member_data
-	#Member Contribution
-	for member in members:
-		member_data.append({})
-		member_data[i]['name'] = member.username
-		taskDone = 0
-		for task in tasks:
-			if task.completeBy:
-				for user in task.completeBy.all():
-					if user.username == member.username: #Need to work on after changing the database
-						taskDone += 1
-		member_data[i]['taskDone'] = taskDone #Definitely need to check
-		i += 1
-
-	#Separate 2 form validation
-	if form_add_member.submit_member.data and form_add_member.validate():
-		member_in_team = []
-		membersAdd = form_add_member.teamMembers.data.split(', ')
-
-		for member in team.members.all(): #find all the member of the team
-			member_in_team.append(member.username)
-
-		for member in membersAdd:
-			if not (member in member_in_team): # a condition to check if member is already in the team or not
-				user = User.query.filter_by(username=member).first() # those line will ensure that the DB wont have any duplicated rows
-				team.members.append(user)
-			else:
-				flash("%s is already in your team" %(member), "info" )
-		db.session.commit()
-
-	if form_add_task.submit_task.data and form_add_task.validate():
-		task = Task(name=form_add_task.name.data, description=form_add_task.description.data, inTeam=team)
-		db.session.add(task)
-		db.session.commit()
-
-	# if form_edit_task.save_task.data and form_edit_task.validate():
-	# 	task = Task.query.get(form_edit_task.id.data)
-	# 	task.name = form_edit_task.name.data
-	# 	task.description = form_edit_task.description.data
-	# 	db.session.commit()
-	# 	return redirect(url_for('myTeam',team_id=team.id))
-	if request.method == 'POST':
-		if request.form.get('editId'):
-			task = Task.query.get(request.form.get('editId'))
-			task.name = request.form.get('editName')
-			task.description = request.form.get('editDescription')
-			db.session.commit()
-		if request.form.get('completeId'):
-			task = Task.query.get(request.form.get('completeId'))
-			task.status = True
-			task.date_completed = datetime.utcnow()
-			membersComplete = request.form.getlist('membersComplete')
-			for member in membersComplete:
-				user = User.query.filter_by(username=member).first()
-				task.completeBy.append(user)
-				db.session.commit()
-
-
-
-
-	return render_template(
-		"myteam.html",
-		title=team.name,
-		team=team,
-		form_add_member=form_add_member,
-		form_add_task=form_add_task,
-		form_edit_task=form_edit_task,
-		progress=progress,
-		member_data=member_data,
-		totalTaskComplete=totalTaskComplete,
-		task_data=task_data
-		)
-=======
     team = Team.query.get_or_404(team_id)
     members_id = []
     for member in team.members.all():
@@ -365,7 +238,6 @@ def myTeam(team_id):
             else:
                 flash("%s is already in your team" % (member), "info")
         db.session.commit()
->>>>>>> 29be0b84f4c682aadc52bb1afb953d8a01f75265
 
     if form_add_task.submit_task.data and form_add_task.validate():
         task = Task(name=form_add_task.name.data,
@@ -509,22 +381,19 @@ def sessions():
 
 
 def messageReceived(methods=['GET', 'POST']):
-<<<<<<< HEAD
- <<<<<<< HEAD
     print('message was received!!!')
 
 @socketio.on('my event')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print('received my event: ' + str(json))
     socketio.emit('my response', json, callback=messageReceived)
-
-
- =======
-	print('message was received!!!')
-=======
+    print('message was received!!!')
     print('message was received!!!')
 
->>>>>>> 29be0b84f4c682aadc52bb1afb953d8a01f75265
+
+
+
+
 
 @socketio.on('join', namespace='/chat')
 def join(room):
@@ -533,7 +402,7 @@ def join(room):
     print(current_user.username + ' has entered the room. ', room)
     send(current_user.username + ' has joined', room=room)
 
-<<<<<<< HEAD
+
 @socketio.on('my event', namespace='/chat')
 def handle_custom_event(json, methods=['GET','POST']):
 	team_id = request.args.get('team_id')
@@ -542,7 +411,6 @@ def handle_custom_event(json, methods=['GET','POST']):
 	print("message received:" + str(json))
 	emit('my response', json, callback=messageReceived(), room=int(team_id))
 
- >>>>>>> 2d80de8e391e3e691c852d40011715ac3c357b74
 
 @app.route('/team/<int:team_id>/discussion/new', methods=['GET','POST'])
 @login_required
@@ -660,7 +528,7 @@ def update_comment(post_id,team_id,comment_id):
 		form.content.data = comment.content
 	return render_template('new_comment.html', title='Update comment',
 						   form=form, legend='Update comment')
-=======
+
 
 @socketio.on('my event', namespace='/chat')
 def handle_custom_event(json, methods=['GET', 'POST']):
@@ -669,4 +537,3 @@ def handle_custom_event(json, methods=['GET', 'POST']):
         team_id = request.args.get('team_id')
     print("message received:" + str(json))
     emit('my response', json, callback=messageReceived(), room=int(team_id))
->>>>>>> 29be0b84f4c682aadc52bb1afb953d8a01f75265
