@@ -15,22 +15,29 @@ editTeamName = document.getElementById('editTeamName')
 teamName = document.getElementById('teamName')
 toggleEdit = document.getElementById('toggleEdit')
 cancelEdit = document.getElementById('cancelEdit')
-
+inputText = document.querySelectorAll('.Input-text')
+console.log(inputText[1])
 function showInput(){
 	var teamNameWidth = teamName.offsetWidth
 	editTeamName.style.width = teamNameWidth+ 25 +'px'
-	editTeamName.style.display = 'block'
+	for (let i = 0; i < inputText.length; i++) {
+		inputText[i].style.display = 'block'
+		console.log(inputText)
+	}
 	editTeamName.value = teamName.innerHTML
 	teamName.style.display = 'none'
 	// On/Off Edit-Cancel Button
 	toggleEdit.style.display = 'none'
-	cancelEdit.style.display = 'block'
+	cancelEdit.style.display = 'inline-block'
 }
 
 function hideInput(){
-	editTeamName.style.display = 'none'
+	for (let i = 0; i < inputText.length; i++) {
+		inputText[i].style.display = 'none'
+		console.log(inputText)
+	}
 	teamName.style.display = 'block'
-	toggleEdit.style.display = 'block'
+	toggleEdit.style.display = 'inline-block'
 	cancelEdit.style.display = 'none'
 
 }

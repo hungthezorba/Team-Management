@@ -8,8 +8,10 @@
 				<div>
 					<div style="display: inline-block;">
 						<h2 id="teamName">{{ team.name }}</h2>
-						<form>
-							<h2><input class="Input-text" style="display: none;" id="editTeamName"  name="teamName"></h2>
+						<form method="POST">
+							{{form_edit_team.hidden_tag()}}
+							<h2>{{form_edit_team.teamName(class="Input-text",style="display: none;", id="editTeamName")}}</h2>
+							<i>{{form_edit_team.submit(class="Input-text fa fa-check",style="display: none;", id="edit-submit-button")}}</i>
 						</form>
 					</div>
 					<div style="display: inline-block;">
@@ -54,8 +56,6 @@
 								<a class="dropdown-item"
 									href="{{url_for('remove_member',team_id=team.id, member_id=member.id)}}">Remove
 									Member</a>
-								<a class="dropdown-item" href="#">Another action</a>
-								<a class="dropdown-item" href="#">Something else here</a>
 							</div>
 							{% endif %}
 						</div>

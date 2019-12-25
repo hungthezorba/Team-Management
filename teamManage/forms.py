@@ -53,6 +53,9 @@ class TeamForm(FlaskForm):
 					pass
 				else:
 					raise ValidationError("%s is not a Team Manager's member" %(member))
+class EditTeamForm(FlaskForm):
+	teamName = StringField("Team Name", validators=[DataRequired(), Length(min=2, max=50)])
+	submit = SubmitField("Save")
 		
 class AddMemberForm(FlaskForm):
 	teamMembers = StringField("Members",validators=[DataRequired()])

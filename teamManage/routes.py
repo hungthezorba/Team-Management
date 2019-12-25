@@ -3,7 +3,7 @@ import secrets
 from flask import render_template, url_for, redirect, flash, request, abort
 from teamManage import app, db, bcrypt, socketio
 from PIL import Image
-from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm, EditTaskForm
+from teamManage.forms import RegisterForm, LoginForm, TeamForm, EditTeamForm ,AddMemberForm, TaskForm, UpdateProfileForm, EditTaskForm
 from teamManage.models import User, Team, Task
 from flask_login import login_user, current_user, login_required, logout_user
 from datetime import datetime, timedelta
@@ -136,12 +136,10 @@ def team():
 @app.route("/team/<int:team_id>", methods=["GET","POST","PUT"])
 def myTeam(team_id):
 	team = Team.query.get_or_404(team_id)
-	members_id = []
-	for member in team.members.all():
-		members_id.append(member.id)
-	if current_user.id not in members_id:
-		return(abort(403))
+	if current_user not in team.members.all():
+		return (abort(403))
 
+	form_edit_team = EditTeamForm()
 	form_add_member = AddMemberForm()
 	form_add_task = TaskForm()
 	form_edit_task = EditTaskForm()
@@ -223,12 +221,10 @@ def myTeam(team_id):
 		db.session.add(task)
 		db.session.commit()
 
-	# if form_edit_task.save_task.data and form_edit_task.validate():
-	# 	task = Task.query.get(form_edit_task.id.data)
-	# 	task.name = form_edit_task.name.data
-	# 	task.description = form_edit_task.description.data
-	# 	db.session.commit()
-	# 	return redirect(url_for('myTeam',team_id=team.id))
+	if form_edit_team.submit.data and form_edit_team.validate():
+		team.name = form_edit_team.teamName.data
+		db.session.commit()
+
 	if request.method == 'POST':
 		if request.form.get('editId'):
 			task = Task.query.get(request.form.get('editId'))
@@ -244,14 +240,13 @@ def myTeam(team_id):
 				user = User.query.filter_by(username=member).first()
 				task.completeBy.append(user)
 				db.session.commit()
-			
-
 	
 
 	return render_template(
 		"myteam.html", 
 		title=team.name, 
 		team=team, 
+		form_edit_team=form_edit_team,
 		form_add_member=form_add_member, 
 		form_add_task=form_add_task,
 		form_edit_task=form_edit_task,
@@ -302,6 +297,14 @@ def create_team():
 		return redirect(url_for("myTeam",team_id=team.id)) # later will redirect to team/team_id url team_id
 	return render_template("create_team.html",form=form, title="Team Create")
 
+@app.route("/team/<int:team_id>/edit", methods=["GET", "POST"])
+def edit_team(team_id):
+	form = EditTeamForm()
+	team = Team.query.get_or_404(team_id)
+	
+	return redirect(url_for("myTeam",team_id=team.id)) 
+
+
 @app.route("/team/<int:team_id>/delete",methods=["GET","POST"])
 def delete_team(team_id):
 	team = Team.query.get_or_404(team_id)
@@ -340,12 +343,14 @@ def remove_member(team_id,member_id):
 		flash('You are not the team leader','danger')
 	return redirect(url_for("myTeam",team_id=team.id))
 
-users = []
 
 @app.route('/chat', methods=["GET", "POST"])
 @login_required
 def sessions():
-    return render_template('chat.html')
+	team = Team.query.get_or_404(request.args.get('team_id'))
+	if current_user not in team.members.all():
+		return (abort(403))
+	return render_template('chat.html')
 
 def messageReceived(methods=['GET', 'POST']):
 	print('message was received!!!')
@@ -360,6 +365,7 @@ def join(room):
 @socketio.on('my event', namespace='/chat')
 def handle_custom_event(json, methods=['GET','POST']):
 	team_id = request.args.get('team_id')
+	
 	while team_id == None:
 		team_id = request.args.get('team_id')
 	print("message received:" + str(json))
