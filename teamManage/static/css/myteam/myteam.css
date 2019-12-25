@@ -40,6 +40,14 @@
 #cancelEdit{
   display: none;
 }
+
+#edit-submit-button{
+  position: absolute;
+  width: 10%;
+  top: 10px;
+  left: 180px;
+}
+
 /* Avatar CSS */
 .avatar-icon {
   border-radius: 50%;
