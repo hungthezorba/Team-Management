@@ -5,7 +5,7 @@ from teamManage import app, db, bcrypt, socketio
 from PIL import Image
 
 from teamManage.forms import RegisterForm, LoginForm, TeamForm, AddMemberForm, TaskForm, UpdateProfileForm, \
-EditTaskForm, PostForm,CommentForm
+EditTaskForm, PostForm,CommentForm, EditTeamForm
 from teamManage.models import User, Team, Task,Post,Comment
 from flask_login import login_user, current_user, login_required, logout_user
 from datetime import datetime, timedelta
@@ -149,7 +149,6 @@ def team():
 
 @app.route("/team/<int:team_id>", methods=["GET", "POST", "PUT"])
 def myTeam(team_id):
-<<<<<<< HEAD
 	team = Team.query.get_or_404(team_id)
 	if current_user not in team.members.all():
 		return (abort(403))
@@ -216,11 +215,11 @@ def myTeam(team_id):
 		i += 1
 
 	#Separate 2 form validation
-	if form_add_member.submit_member.data and form_add_member.validate(): 
+	if form_add_member.submit_member.data and form_add_member.validate_on_submit():
 		member_in_team = []
 		membersAdd = form_add_member.teamMembers.data.split(', ')
 
-		for member in team.members.all(): #find all the member of the team
+		for member in team.members.all(): #find all the member of the team	
 			member_in_team.append(member.username)
 
 		for member in membersAdd: 
@@ -231,11 +230,10 @@ def myTeam(team_id):
 				flash("%s is already in your team" %(member), "info" )
 		db.session.commit()
 
-    if form_add_task.submit_task.data and form_add_task.validate():
-        task = Task(name=form_add_task.name.data,
-                    description=form_add_task.description.data, inTeam=team)
-        db.session.add(task)
-        db.session.commit()
+	if form_add_task.submit_task.data and form_add_task.validate_on_submit():
+		task = Task(name=form_add_task.name.data, description=form_add_task.description.data, inTeam=team)
+		db.session.add(task)
+		db.session.commit()
 
 	if form_edit_team.submit.data and form_edit_team.validate():
 		team.name = form_edit_team.teamName.data

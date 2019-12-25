@@ -72,6 +72,14 @@ class AddMemberForm(FlaskForm):
 	
 		
 
+class PostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Post')
+class CommentForm(FlaskForm):
+	content = TextAreaField('Content', validators=[DataRequired()])
+	submit = SubmitField('Post')
+
 class TaskForm(FlaskForm):
 	name = StringField("Task Name", validators=[DataRequired()])
 	description = TextAreaField("Task Description")
