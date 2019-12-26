@@ -234,10 +234,13 @@ def myTeam(team_id):
 		task = Task(name=form_add_task.name.data, description=form_add_task.description.data, inTeam=team)
 		db.session.add(task)
 		db.session.commit()
+		return (redirect(url_for('myTeam',team_id=team.id)))
 
 	if form_edit_team.submit.data and form_edit_team.validate():
 		team.name = form_edit_team.teamName.data
 		db.session.commit()
+		return (redirect(url_for('myTeam',team_id=team.id)))
+
 
 	if request.method == 'POST':
 		if request.form.get('editId'):
@@ -254,6 +257,8 @@ def myTeam(team_id):
 				user = User.query.filter_by(username=member).first()
 				task.completeBy.append(user)
 				db.session.commit()
+		return (redirect(url_for('myTeam',team_id=team.id)))
+
 	
 
 	return render_template(

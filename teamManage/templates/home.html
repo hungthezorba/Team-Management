@@ -1,7 +1,113 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="container">
-
+        <div class="container" style="padding:128px; background-color: rgb(167, 199, 248);">
+                <h3 class="center">Successful Projects 
+                    Start With Collaboration</h3>
+                <p class="center large">Whatever falls in the middle, make sure you aren't missing one of these building blocks.</p>
+                <a href={{url_for('register')}} class="button btn btn-primary"><i class="fa fa">&nbsp;</i> Get started</a></p>
+        </div>
+        <div class="container"> 
+                    <div class="row">
+                      <div class="col" style="margin-top:40px; margin-left:0px">
+                          <div class ="jumbotron">
+                            <div class="span">
+                                <img style="height: 100%;width: 100%" src="{{url_for('static',filename="images/icon1.png")}}">
+                                  <span style="font-family:inherit ;color:black; font-size:22px">Situation report is used to capture key information to update response team and stakeholders on the status ò the incident</span>
+                                </a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col" style="margin-top:40px; margin-left:0px">
+                            <div class ="jumbotron">
+                              <div class="span">
+                                  <img style="height: 100%;width: 100%" src="{{url_for('static',filename="images/icon2.png")}}">
+                                  
+                                    <span style="font-family:inherit ;color:black; font-size:22px">Decision supports is critical in guiding the Management Team through the planning process in understanding the impacts, determining priorities and actions required.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col" style="margin-top:40px; margin-left:0px">
+                            <div class ="jumbotron">
+                              <div class="span">
+                                  <img style="height: 100%;width: 100%" src="{{url_for('static',filename="images/icon3.png")}}">
+                                    <span style="font-family:inherit ;color:black; font-size:22px">Incident classification is used as a guide to help classify an incident and determine the level of reponse required by the reponse teams .</span>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        </div>
+                    </div>
+              <div class="jumbotron">
+              <div class="container light-grey" style="padding:128px 16px;">
+                <div class="row">
+                  <div class="col-xl-6">
+                    <h2>We Are Growing!</h2>
+                    <p>We experience sustainable growth since we started out on business. The brightest minds in cognitive computing have joined us.</p>
+                    <p><a href="#work" class="button btn btn-outline-secondary"><i class="fa fa-th">&nbsp;</i> Join US</a></p>
+                  </div>
+                  <div class="col-xl-6">
+                    <img class="image roundlarge" src="{{url_for('static',filename="images/teamwork.jpg")}}" alt="Buildings" width="700" height="394">
+                  </div>
+                </div>
+              </div>
+              </div>
+              <div class="jumbotron" style="color: #fff!important; background-color: #616161!important;">
+              <div class="row" style="margin-left:160px;">
+                <div class="col-md-3">
+                  <span class="large">6+</span>
+                  <br>Partners
+                </div>
+                <div class="col-md-3">
+                  <span class="large">2+</span>
+                  <br>Projects Done
+                </div>
+                <div class="col-md-3">
+                  <span class="large">6+</span>
+                  <br>Happy Clients
+                </div>
+                <div class="col-md-3">
+                  <span class="large">69+</span>
+                  <br>Meetings
+                </div>
+              </div>
+              </div>
+              <div class="jumbotron">
+              <div class="container" style="padding:128px 16px" id="work">
+                <h3 class="center">Join us</h3>
+                <p class="center large">What we've learned </p>
+              
+                <div class="row" style="margin-top:64px">
+                  <div class="col-md-3">
+                    <img src="{{url_for('static',filename="images/learn1.png")}}" style="width:100%" onclick="onClick(this)" class="hover-opacity" alt="Approvals">
+                  </div>
+                  <div class="col-md-3">
+                    <img src="{{url_for('static',filename="images/learn2.png")}}" style="width:100%" onclick="onClick(this)" class="hover-opacity" alt="Teamwork">
+                  </div>
+                  <div class="col-md-3">
+                    <img src="{{url_for('static',filename="images/learn3.png")}}" style="width:100%" onclick="onClick(this)" class="hover-opacity" alt="company directory">
+                  </div>
+                  <div class="col-md-3">
+                    <img src="{{url_for('static',filename="images/learn4.png")}}" style="width:100%" onclick="onClick(this)" class="hover-opacity" alt="Employee Snapshot">
+                  </div>
+                </div>
+              
+                <div class="row" style="margin-top:64px">
+                  <div class="col-sm-3">
+                    <img src="{{url_for('static',filename="images/learn5.png")}}"  style="width:100%" onclick="onClick(this)" class="hover-opacity" alt="Team Time">
+                  </div>
+                  <div class="col-sm-3">
+                    <img src="{{url_for('static',filename="images/learn6.png")}}" style="width:100%" onclick="onClick(this)" class="hover-opacity" alt="Absence Analytics">
+                  </div>
+                  <div class="col-sm-3">
+                    <img src="{{url_for('static',filename="images/learn7.png")}}" style="width:100%" onclick="onClick(this)" class="hover-opacity" alt="Team Performance">
+                  </div>
+                  <div class="col-sm-3">
+                    <img src="{{url_for('static',filename="images/learn8.png")}}" style="width:100%" onclick="onClick(this)" class="hover-opacity" alt="Career and succession Planning">
+                  </div>
+                </div>
+              </div>
+            </div>
 
 </div>
 {% endblock %}

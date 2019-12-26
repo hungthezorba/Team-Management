@@ -1,27 +1,49 @@
 {% extends "layout.html" %}
 {% block content %}
-    {% for post in posts %}
-        <article class="media content-section">
-          <img class="rounded-circle article-img" src="{{ profile_image }}">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="#">{{ post.author.username }}</a>
-              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
-            </div>
-            <a href="{{url_for('post',team_id=team.id,post_id=post.id)}}"><h2>{{ post.title }}</h2></a>
-            <p class="article-content">{{ post.content }}</p>
-          </div>
-        </article>  
-      {% endfor %}
-      <!--adding button-->
-      <div class="wrap-custom">
+
+    <h2 style="display: inline-block" class="h4 text-white bg-info mb-0 p-4 rounded-top">Discussion Board</h2>
+    <a style="float: right; display: inline-block; margin-left: 8px" href="{{url_for('myTeam',team_id=team.id)}}"><button class="btn btn-primary">Return</button></a>
+
+    <div style="float: right; display: inline-block;">
         <section id="team-header">
           <div>
-            <form style="display: inline-block;" method="POST"
-            action="{{url_for('discussion',team_id=team.id)}}">
-            <input type="submit" value="Add new post" class="btn btn-danger">
+            <form style="display: inline-block;" method="POST" action="{{url_for('discussion',team_id=team.id)}}">
+              <input type="submit" value="Add new post" class="btn btn-primary">
             </form>
           </div>
         </section>
       </div>
+    <table class="table table-striped table-bordered table-responsive-lg">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Posted By</th>
+            <th scope="col">Title</th>
+          </tr>
+        </thead>
+    {% for post in posts %}
+    <!-- --------------------------------------------------------- -->
+
+      <tbody>
+        <tr>
+          <td class="author-col">
+            <div>
+              <img style="display : inline-block" class="avatar-icon" src="{{url_for('static', filename='profile_pics/' + post.author.profile_image)}}"}>
+              <p style="display : inline-block">{{ post.author.username }}</p> 
+            </div>
+          </td>
+          <td class="post-col d-lg-flex justify-content-lg-between">
+            <div>
+
+              <a href="{{url_for('post',team_id=team.id,post_id=post.id)}}">{{post.title}}</a>
+
+            </div>
+            <div><span class="font-weight-bold">Posted:</span>{{post.date_posted.strftime('%Y-%m-%d')}}</div>
+          </td>
+        </tr>
+      </tbody>
+{% endfor %}
+</table>
+
+<!--adding button-->
+
 {% endblock content %}

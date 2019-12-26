@@ -1,73 +1,84 @@
 {% extends "layout.html" %}
 {% block content %}
-  <article class="media content-section">
-    <img class="rounded-circle article-img" src="{{ profile_image }}">
-    <div class="media-body">
-      <div class="article-metadata">
-        <a class="mr-2" href="#">{{ post.author.username }}</a>
-        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
-      </div>
-      <h2 class="article-title">{{ post.title }}</h2>
-      <p class="article-content">{{ post.content }}</p>
-    </div>
-  </article>
-  <!-- Modal -->
-  <div class="wrap-custom">
-    <section id="team-header">
-      <div class="container">
-        <section class="section-custom">
+
+
+    <div class="row">
+      <div class="col-12">
+        <div style="position: relative;">
           <div>
-            <form style="display: inline-block;" method="POST"
-            action="{{url_for('delete_post',team_id=team.id,post_id=post.id)}}">
-            <input type="submit" value="Delete" class="btn btn-danger">
-            </form>
-            <form style="display: inline-block;" method="POST"
-            action="{{url_for('update_post',team_id=team.id,post_id=post.id)}}">
-            <input type="submit" value="Update" class="btn btn-danger">
-            </form>
-            <form style="display: inline-block;" method="POST"
-            action="{{url_for('add_comment',team_id=team.id,post_id=post.id)}}">
-            <input type="submit" value="Add comment " class="btn btn-danger">
-            </form>
+          <h2 class="h4 text-white bg-info mb-0 p-4 rounded-top">{{ post.title }}</h2>
+          </div >
+          {% if current_user == post.author %}
+
+              <div style="bottom: 25px; right : 50px ;position: absolute;">
+                <form style="display: inline-block;" method="POST"
+                action="{{url_for('delete_post',team_id=team.id,post_id=post.id)}}">
+                <input type="submit" value="Delete" class="btn btn-danger">
+                </form>
+                <form style="display: inline-block;" method="POST"
+                action="{{url_for('update_post',team_id=team.id,post_id=post.id)}}">
+                <input type="submit" value="Update" class="btn btn-danger">
+                </form>
+              </div>
+            {% endif %}
+    
           </div>
+          <table class="table table-striped table-bordered table-responsive-lg">
+              <thead class="thead-light">
+                  <tr>
+                      <th scope="col">Author</th>
+                      <th scope="col">Message</th>
+                  </tr>
+              </thead>
+              {% for comment in comments %}
+              <tbody>
+                  <tr>
+                      
+                      <td class="author-col">
+                          <div>by <a href="#">{{comment.user.username}}</a></div>
+                      </td>
+                      <td class="post-col d-lg-flex justify-content-lg-between">
+                          <div><span class="font-weight-bold">Posted:</span>{{comment.date_posted.strftime('%Y-%m-%d')}}</div>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td>
+                          <div><span class="font-weight-bold">Posts:</span><br>{{comment.user.posts | length }}</div>
+                      </td>
+                     
+                      <td>
+                        <div>
+                          <p>{{comment.content}}</p>
+                        </div>
+                        {% if current_user == comment.user %}
+                          <div class="">
+                                    <div>
+                                      <form style="display: inline-block;" method="POST"
+                                      action="{{url_for('delete_comment',team_id=team.id,post_id=post.id,comment_id=comment.id)}}">
+                                      <input type="submit" value="Delete" class="btn btn-danger">
+                                      </form>
+                                      <form style="display: inline-block;" method="POST"
+                                      action="{{url_for('update_comment',team_id=team.id,post_id=post.id,comment_id=comment.id)}}">
+                                      <input type="submit" value="Update" class="btn btn-primary">
+                                      </form>
+                                    </div>
+                                </div>
+                                {% endif %}
+                        </div>
+                      </td>
+                  </tr>
+                  
+              </tbody>
+              
+              
+              {% endfor %}
+              
 
-        </section>
+          </table>
+          <form style="display: inline-block;" method="POST"
+          action="{{url_for('add_comment',team_id=team.id,post_id=post.id)}}">
+          <input type="submit" value="Add comment " class="btn btn-danger">
+          </form>
       </div>
-    </section>
-
-  </div>
-  <!--comment field-->
-  {% for comment in comments %}
-  <article class="media content-section">
-    <img class="rounded-circle article-img" src="{{ profile_image }}">
-    <div class="media-body">
-      <div class="article-metadata">
-        <a class="mr-2" href="#">{{ comment.user.username }}</a>
-        <small class="text-muted">{{ comment.date_posted.strftime('%Y-%m-%d') }}</small>
-      </div>
-      <p class="article-content">{{ comment.content }}</p>
-    </div>
-  </article>  
-  <!--button section-->
-  <div class="wrap-custom">
-    <section id="team-header">
-      <div class="container">
-        <section class="section-custom">
-          <div>
-            <form style="display: inline-block;" method="POST"
-            action="{{url_for('delete_comment',team_id=team.id,post_id=post.id,comment_id=comment.id)}}">
-            <input type="submit" value="Delete" class="btn btn-danger">
-            </form>
-            <form style="display: inline-block;" method="POST"
-            action="{{url_for('update_comment',team_id=team.id,post_id=post.id,comment_id=comment.id)}}">
-            <input type="submit" value="Update" class="btn btn-danger">
-            </form>
-          </div>
-
-        </section>
-      </div>
-    </section>
-
-  </div>
-  {% endfor %}
+  
 {% endblock content %}
