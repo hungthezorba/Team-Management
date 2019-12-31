@@ -9,15 +9,16 @@
 				<div>
 					<div style="display: inline-block;">
 						<h2 id="teamName">{{ team.name }}</h2>
-						<form method="POST">
+						<form method="POST" style="display : flex; justify-content: center;">
 							{{form_edit_team.hidden_tag()}}
 							<h2>{{form_edit_team.teamName(class="Input-text",style="display: none;", id="editTeamName")}}</h2>
-							<i>{{form_edit_team.submit(class="Input-text fa fa-check",style="display: none;", id="edit-submit-button")}}</i>
+							{{form_edit_team.submit(class="Input-text",style="display: none;", id="edit-submit-button")}}
 						</form>
 					</div>
 					<div style="display: inline-block;">
 						<i id="toggleEdit" onclick="showInput()" style="margin-left: 10px; font-size:25px; display: inline-block;" class="fa fa-edit"></i>
 					</div>
+					
 					<div style="display: inline-block;">
 						<i id="cancelEdit" onclick="hideInput()" style="margin-left: 10px; font-size:25px;" class="fa fa-times" aria-hidden="false"></i>
 					</div>
@@ -39,7 +40,7 @@
 						</form>
 						<form style="display: inline-block;" method="POST"
 							action="{{url_for('discussion_list', team_id=team.id)}}">
-							<input type="submit" value="discussion" class="btn btn-primary">
+							<input type="submit" value="Discussion" class="btn btn-primary">
 						</form>
 					</div>
 				</div>
@@ -288,13 +289,15 @@
 						<input name='editId' id="editId">
 					</div>
 					<div>
+						<h3>Name</h3>
 						<input name='editName' id="editName">
 					</div>
 					<div>
-						<input name='editDescription' id="editDescription">
+						<h3>Description</h3>
+						<textarea name='editDescription' id="editDescription"></textarea>
 					</div>
 					<div>
-						<input type="submit" value="submit">
+						<input class="btn btn-info" type="submit" value="submit">
 					</div>
 				</form>
 			</div>
@@ -315,7 +318,7 @@
 			<div class="modal-body">
 
 				<form method="POST">
-					<div>
+					<div style="display: none;">
 						<input name='completeId' id="completeId">
 					</div>
 					{% for member in team.members %}
@@ -323,7 +326,7 @@
 							<a><img class="avatar-icon" src="{{url_for('static', filename='profile_pics/' + member.profile_image)}}"/></a>
 					{% endfor %}
 					<div>
-						<input type="submit" value="submit">
+						<input class="btn btn-primary" type="submit" value="submit">
 					</div>
 				</form>
 			</div>

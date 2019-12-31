@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
+<div style="padding-bottom: 80px;">
     <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
 <a href="{{url_for('myTeam',team_id=request.args.get('team_id'))}}"><button class="btn btn-primary">Return</button></a>
     <!--1<div class="message_holder"></div>
@@ -103,5 +104,5 @@
 
 
     </script>
-
+</div>
 {% endblock %}

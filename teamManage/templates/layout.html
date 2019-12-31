@@ -93,23 +93,7 @@
 
     <!-- Sidebar -->
     {% if current_user.is_authenticated %}
-        <ul class="sidebar navbar-nav drop">
-            <li class="nav-item active">
-                <a class="nav-link">
-                    <span>Team</span>
-                </a>
-            </li>
-            <li class="nav-item dropdown">
-            </li>
-            <li class="nav-item">
-                <a class="nav-link">
-                    <span>Chat</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span>People</span></a>
-            </li>
-        </ul>
+        
     {% else %}
         <p></p>
     {% endif %}
@@ -129,15 +113,7 @@
 
 
       <!-- Sticky Footer -->
-      {% if current_user.is_authenticated %}
-          <footer class="sticky-footer" style="width: calc(100% - 225px);">
-              <div class="container my-auto">
-                  <div class="copyright text-center my-auto">
-                      <span>Copyright © TeamMangement 2019</span>
-                  </div>
-              </div>
-          </footer>
-      {% else  %}
+     
           <footer class="sticky-footer" style="width: calc(100% - 0px);">
               <div class="container my-auto">
                   <div class="copyright text-center my-auto">
@@ -145,7 +121,6 @@
                   </div>
               </div>
           </footer>
-      {% endif %}
           
 
 

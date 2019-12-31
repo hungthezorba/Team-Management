@@ -2,7 +2,8 @@
 {% block content %}
 
 
-    <div class="row">
+    <div style="padding-bottom: 80px;"
+        class="row">
       <div class="col-12">
         <div style="position: relative;">
           <div>
@@ -19,6 +20,8 @@
                 action="{{url_for('update_post',team_id=team.id,post_id=post.id)}}">
                 <input type="submit" value="Update" class="btn btn-danger">
                 </form>
+                <a style="float: right; display: inline-block; margin-left: 8px" href="{{url_for('discussion_list',team_id=post.Team_id)}}"><button class="btn btn-primary">Back</button></a>
+
               </div>
             {% endif %}
     
@@ -30,6 +33,33 @@
                       <th scope="col">Message</th>
                   </tr>
               </thead>
+              <tbody>
+                <tr>
+                    
+                    <td class="author-col">
+                        <div>by <a href="#">{{post.author.username}}</a></div>
+                    </td>
+                    <td class="post-col d-lg-flex justify-content-lg-between">
+                        <div><span class="font-weight-bold">Posted:</span>{{post.date_posted.strftime('%Y-%m-%d')}}</div>
+                    </td>
+                </tr>
+                <tr>
+
+                    <td>
+                        <div><span class="font-weight-bold">Posts:</span><br>{{post.author.posts | length }}</div>
+                    </td>
+                  <td>
+                    <div>
+                      <p>{{post.content}}</p>
+                    </div>
+                    <!--  -->
+                    </div>
+                  </td>
+                   
+                
+                </tr>
+                
+            </tbody>
               {% for comment in comments %}
               <tbody>
                   <tr>
@@ -75,9 +105,9 @@
               
 
           </table>
-          <form style="display: inline-block;" method="POST"
+          <form class="mb-3" style="display: inline-block;" method="POST"
           action="{{url_for('add_comment',team_id=team.id,post_id=post.id)}}">
-          <input type="submit" value="Add comment " class="btn btn-danger">
+          <input type="submit" value="Add comment " class="btn btn-primary">
           </form>
       </div>
   

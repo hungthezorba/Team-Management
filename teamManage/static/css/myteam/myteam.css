@@ -31,6 +31,8 @@
 
 #editTeamName{
   border-radius: 5px;
+  width: 100%;
+  margin-right: 50px;
 }
 
 #toggleEdit{
@@ -42,10 +44,10 @@
 }
 
 #edit-submit-button{
-  position: absolute;
-  width: 10%;
-  top: 10px;
-  left: 180px;
+  position: relative;
+  width: 100px;
+  height : 30px;
+
 }
 
 /* Avatar CSS */

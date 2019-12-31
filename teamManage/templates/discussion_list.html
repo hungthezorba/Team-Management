@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-
+<div style="padding-bottom: 80px;">
     <h2 style="display: inline-block" class="h4 text-white bg-info mb-0 p-4 rounded-top">Discussion Board</h2>
     <a style="float: right; display: inline-block; margin-left: 8px" href="{{url_for('myTeam',team_id=team.id)}}"><button class="btn btn-primary">Return</button></a>
 
@@ -45,5 +45,5 @@
 </table>
 
 <!--adding button-->
-
+</div>
 {% endblock content %}
