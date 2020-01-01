@@ -14,7 +14,7 @@
   border-radius: 7px;
   transition: 0.2s ease-in;
   background-color: #aeaeae;
-  border: 1px solid #cccccc;
+  border: 1px solid transparent;
 }
 
 .team-card:hover {
@@ -23,7 +23,8 @@
 }
 
 .card-header {
-  color: #faeee7;
+  color: #fff;
+  background-color:transparent !important;
 }
 
 
