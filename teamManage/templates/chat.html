@@ -16,6 +16,7 @@
 				<div class="panel">
 					<!--Heading-->
 					<div class="panel-heading">
+                        <div class="d-inline" id="members_img"></div>
 						<div class="panel-control">
 							<div class="btn-group">
 								<button class="btn btn-default" type="button" data-toggle="collapse"
@@ -72,12 +73,20 @@
 
 
          socket.on( 'connect', function() {
+             let user_img = '<img id="img-display" src="{{url_for("static", filename="profile_pics/" + current_user.profile_image )}}" class="d-inline rounded-circle img-sm mt-1" alt="Profile Picture"/>'
              socket.emit('my event', {
                  data: 'User Connected'
              })
              socket.emit('join', room_name);
-
-
+             socket.emit('my handleMember', {
+                 user_img: user_img
+             })
+             socket.on('my members', function (msg) {
+                 console.log(msg)
+                 if (typeof msg.user_img !== 'undefined') {
+                     $('#members_img').append(msg.user_img)
+                 }
+             })
              $('h3').remove()
              $('#text_holder').append('<div><b> {{ current_user.username }} has connected</b></div>')
              var form = $('form').on('submit', function (e) {
